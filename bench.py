@@ -1,202 +1,245 @@
 #!/usr/bin/env python3
-"""Benchmark evaluation script for K4-L3A (VinUni Tuition dataset).
+"""Benchmark: 5 group queries x retrieval strategies on data/hoc-phi-vinuni.
 
-Meets Deliverable #3: bench.py + ket_qua_benchmark.txt.
-Runs 5 benchmark queries and retrieves top-3 chunks per query with scores and metadata.
+What it does (lab §6 "bench.py"):
+  1. Read every .md: frontmatter -> metadata, body -> content              (rag.corpus)
+  2. Chunk OUTSIDE the store; one Document per chunk, id "<file>#<i>",
+     frontmatter spread into every chunk, metadata["doc_id"] = source file (rag.chunkers)
+  3. Load into src.EmbeddingStore and query through search_with_filter()   (rag.retriever)
+  4. Print top-3 with score + doc_id, score each query at TWO levels:
+       - naive  : is a gold doc_id in the top-3?           (inflates results)
+       - content: does a top-3 chunk from a gold doc contain the answer fact,
+                  and does the generated answer state it?  (docs/SCORING.md)
+     2 = relevant chunk at top-1 + correct answer, 1 = relevant chunk in top-3,
+     0 = no relevant chunk in top-3.
+  5. A/B: every query that needs {"audience": "student"} is also run without it.
+
+Usage:
+    python bench.py                      # all strategies -> ket_qua_benchmark.txt
+    python bench.py --only structure_tree          # one strategy
+    python bench.py --no-rerank                    # skip the cross-encoder (no model download)
+    python bench.py --rerankers BAAI/bge-reranker-v2-m3,cross-encoder/mmarco-mMiniLMv2-L12-H384-v1
 """
 
 from __future__ import annotations
 
-import glob
-import os
+import argparse
 import sys
+import time
+import unicodedata
+from datetime import date
 from pathlib import Path
 
-# Fix Windows console UTF-8 output
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8")
-if hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(encoding="utf-8")
+from dotenv import load_dotenv
 
-from src.chunking import RecursiveChunker
-from src.embeddings import MockEmbedder
-from src.models import Document
-from src.store import EmbeddingStore
+from rag.chunkers import BaselineChunker, StructureAwareChunker, chunk_corpus
+from rag.corpus import load_corpus
+from rag.embeddings import CachedOpenAIEmbedder
+from rag.llm import CachedChatLLM
+from rag.pipeline import RAGPipeline
+from rag.rerank import CrossEncoderReranker
+from rag.retriever import HybridRetriever
 
-# 5 Câu hỏi đánh giá chuẩn (Benchmark Queries) cho chủ đề Học phí VinUni
-BENCHMARK_QUERIES = [
+ROOT = Path(__file__).resolve().parent
+CORPUS = ROOT / "data" / "hoc-phi-vinuni"
+OUTPUT = ROOT / "ket_qua_benchmark.txt"
+STUDENT = {"audience": "student"}
+
+# Each *_keys entry is a group of alternatives; every group must be matched.
+QUERIES = [
     {
-        "id": 1,
-        "query": "Học phí Bác sĩ Y khoa VinUni là bao nhiêu một năm?",
-        "gold_answer": "815.850.000 VND / năm học (407.925.000 VND / kỳ học).",
-        "gold_doc": "vinuni-hoc-phi-cu-nhan",
+        "id": "Q1", "type": "tra số liệu",
+        "question": "Học phí niêm yết một năm của chương trình Cử nhân Điều dưỡng là bao nhiêu?",
+        "gold": "349.650.000 VND/năm (174.825.000 VND/kỳ; 9.780.000 VND/tín chỉ).",
+        "gold_docs": ["quy-dinh-tai-chinh-bieu-phi", "hoc-phi-cu-nhan", "faq-hoc-phi-hoc-bong"],
+        "context_keys": [["349.650.000"]],
+        "answer_keys": [["349.650.000", "349,65 triệu", "349.65"]],
         "filter": None,
     },
     {
-        "id": 2,
-        "query": "Chính sách hỗ trợ 35% học phí từ Vingroup áp dụng cho những ai và duy trì bao lâu?",
-        "gold_answer": "Áp dụng tự động cho tất cả sinh viên trúng tuyển (Việt Nam và quốc tế) và duy trì suốt toàn bộ thời gian học chính thức.",
-        "gold_doc": "vinuni-ho-tro-hoc-phi-35",
+        "id": "Q2", "type": "điều kiện",
+        "question": "Nếu thôi học trong vòng 2 tuần đầu của học kỳ thì được hoàn trả bao nhiêu phần trăm học phí?",
+        "gold": "Hoàn trả 50% học phí thực nộp của học kỳ (trước ngày học đầu tiên: 80%; sau 2 tuần: không hoàn).",
+        "gold_docs": ["quy-dinh-tai-chinh-bieu-phi"],
+        "context_keys": [["Hoàn trả 50%"]],
+        "answer_keys": [["50%"]],
         "filter": None,
     },
     {
-        "id": 3,
-        "query": "Học phí học lại theo tín chỉ tại VinUni được tính bằng bao nhiêu phần trăm?",
-        "gold_answer": "Tính bằng 50% mức học phí chuẩn theo tín chỉ tương ứng của môn học đó.",
-        "gold_doc": "vinuni-hoc-phi-tin-chi-hoc-lai",
+        "id": "Q3", "type": "điều kiện — cần lọc audience",
+        "question": "Học bổng 100% mà điểm trung bình năm học chỉ đạt 2,8 thì có bị hạ học bổng không?",
+        "gold": "Không bị hạ ngay: GPA năm học 2,50–3,19 được 'duy trì học bổng có điều kiện', gia hạn thêm 1 học kỳ "
+                "để cải thiện kết quả và thể hiện E.X.C.E.L; chỉ tự động hạ 1 bậc khi GPA 0,0–2,49 (GDL-SAM-004 V2.1). "
+                "Bẫy: FAQ tuyển sinh (audience=all) nói chung chung là 'giảm 1 bậc (10%)'.",
+        "gold_docs": ["duy-tri-hoc-bong-ho-tro-tai-chinh"],
+        "context_keys": [["Duy trì học bổng có điều kiện"]],
+        "answer_keys": [["có điều kiện"], ["1 học kỳ", "một học kỳ"]],
+        "filter": STUDENT,
+    },
+    {
+        "id": "Q4", "type": "liệt kê",
+        "question": "Có những chính sách ưu đãi học phí hoặc chiết khấu đóng phí nào?",
+        "gold": "Ưu đãi Gia đình giảm 2,5% (từ người thứ 2); ưu đãi Cựu sinh viên 10%; chiết khấu 5% khi đóng học phí và "
+                "phí KTX cả năm đúng hạn. Ưu đãi cựu SV không cộng với ưu đãi gia đình.",
+        "gold_docs": ["quy-dinh-tai-chinh-bieu-phi"],
+        "context_keys": [["2,5%"], ["10%"], ["5%"]],
+        "answer_keys": [["2,5%", "2.5%"], ["10%"], ["5%"]],
         "filter": None,
     },
     {
-        "id": 4,
-        "query": "Rút hồ sơ trước khi học kỳ bắt đầu thì được hoàn lại bao nhiêu phần trăm học phí?",
-        "gold_answer": "Được hoàn trả 90% số học phí thực nộp của học kỳ đó.",
-        "gold_doc": "vinuni-quy-dinh-nop-va-hoan-hoc-phi",
-        "filter": None,
-    },
-    {
-        "id": 5,
-        "query": "Mức chiết khấu giảm học phí cho con em là bao nhiêu?",
-        "gold_answer": "Được giảm thêm 5% học phí niêm yết (cộng dồn với 35% thành 40%). Cần filter audience=student để tránh nhầm với chính sách nhân sự chung.",
-        "gold_doc": "vinuni-chinh-sach-giam-hoc-phi-cbnv",
-        "filter": {"audience": "student"},  # Yêu cầu bắt buộc của K4_VARIANT.md
+        "id": "Q5", "type": "mốc thời gian (hỏi tiếng Việt, nguồn tiếng Anh) — cần lọc audience",
+        "question": "Hạn nộp hồ sơ xin hỗ trợ tài chính cho học kỳ mùa Thu là khi nào?",
+        "gold": "Đợt nộp 20/6 – 10/7 (hạn 10/7), hạn xử lý 02/8, áp dụng cho học kỳ Thu (GDL-FAO-001). "
+                "Bẫy: trang tân sinh viên (audience=all) ghi hạn '23:59 ngày 15 của tháng liền kề trước'.",
+        "gold_docs": ["huong-dan-de-nghi-ho-tro-tai-chinh", "ho-tro-tai-chinh-sinh-vien-dang-hoc"],
+        "context_keys": [["20 June – 10 July", "July 10th", "tháng 7 và tháng 11"]],
+        "answer_keys": [["10/7", "10 tháng 7", "10/07", "July 10", "10 July", "ngày 10 tháng 7"]],
+        "filter": STUDENT,
     },
 ]
 
 
-def parse_frontmatter(content: str) -> tuple[dict[str, str], str]:
-    if not content.startswith("---"):
-        return {}, content
-    parts = content.split("---", 2)
-    if len(parts) < 3:
-        return {}, content
-    yaml_block = parts[1]
-    body = parts[2]
-    metadata = {}
-    for line in yaml_block.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if ":" in line:
-            key, val = line.split(":", 1)
-            metadata[key.strip()] = val.strip().strip('"').strip("'")
-    return metadata, body.strip()
+def norm(text: str) -> str:
+    return unicodedata.normalize("NFC", text).lower().replace("–", "-").replace("—", "-")
 
 
-def run_benchmark():
-    corpus_dir = Path("data/university")
-    md_files = sorted(corpus_dir.glob("*.md"))
-    print(f"=== KHỞI TẠO BENCHMARK: {corpus_dir} ===")
-    print(f"Tìm thấy {len(md_files)} tài liệu nguồn.")
+def has(text: str, alternatives: list[str]) -> bool:
+    return any(norm(a) in norm(text) for a in alternatives)
 
-    # Chiến lược chia nhỏ (mỗi người có thể tùy chỉnh tham số chunk_size)
-    chunker = RecursiveChunker(chunk_size=350)
-    all_chunks: list[Document] = []
 
-    for path in md_files:
-        text = path.read_text(encoding="utf-8")
-        metadata, body = parse_frontmatter(text)
-        doc_id = metadata.get("doc_id", path.stem)
+def evaluate(query: dict, result: dict) -> dict:
+    chunks = result["chunks"]
+    primary = query["context_keys"][0]
+    relevant = [
+        c["metadata"]["doc_id"] in query["gold_docs"] and has(c["content"], primary)
+        for c in chunks
+    ]
+    doc_hit = any(c["metadata"]["doc_id"] in query["gold_docs"] for c in chunks)
+    union = "\n".join(c["content"] for c in chunks)
+    coverage = sum(has(union, group) for group in query["context_keys"]) / len(query["context_keys"])
+    answer_ok = all(has(result["answer"], group) for group in query["answer_keys"])
+    first = relevant.index(True) + 1 if any(relevant) else None
+    score = 2 if first == 1 and answer_ok else (1 if first else 0)
+    return {"score": score, "first_relevant": first, "doc_hit": doc_hit, "coverage": coverage, "answer_ok": answer_ok}
 
-        # Cắt nhỏ phần thân văn bản
-        chunks = chunker.chunk(body)
-        for i, chunk_text in enumerate(chunks):
-            chunk_doc = Document(
-                id=f"{path.stem}#{i}",
-                content=chunk_text,
-                metadata={
-                    **metadata,
-                    "doc_id": doc_id,
-                    "chunk_index": i,
-                    "source_path": str(path),
-                },
-            )
-            all_chunks.append(chunk_doc)
 
-    print(f"Đã chia nhỏ thành tổng cộng: {len(all_chunks)} chunks.")
+def build_strategies(chunk_sets: dict, embedder, llm, rerankers: list) -> dict[str, HybridRetriever]:
+    specs = {
+        # lab baselines: same embedder, dense search only, only the chunker changes
+        "fixed_size": ("fixed_size", {}),
+        "by_sentences": ("by_sentences", {}),
+        "recursive": ("recursive", {}),
+        "structure_leaf": ("structure_leaf", {}),
+        "structure_tree": ("structure_aware", {}),
+        # ablation on the structure-aware (tree) chunks: add one technique at a time
+        "tree+bm25": ("structure_aware", {"use_bm25": True}),
+        "tree+bm25+hyde": ("structure_aware", {"use_bm25": True, "use_hyde": True, "llm": llm}),
+    }
+    for reranker in rerankers:  # full pipeline = tree chunks + BM25 + HyDE + cross-encoder
+        short = reranker.model_name.split("/")[-1].split("-v")[0]
+        specs[f"full[{short}]"] = ("structure_aware", {"use_bm25": True, "use_hyde": True, "llm": llm, "reranker": reranker})
+    return {name: HybridRetriever(chunk_sets[chunker], embedder, name=name, **options) for name, (chunker, options) in specs.items()}
 
-    # Khởi tạo Vector Store
-    embedder = MockEmbedder()
-    store = EmbeddingStore(collection_name="benchmark_store", embedding_fn=embedder)
-    store.add_documents(all_chunks)
-    print(f"Đã nạp {store.get_collection_size()} chunks vào EmbeddingStore thành công.\n")
 
-    print("=" * 80)
-    print("KẾT QUẢ ĐÁNH GIÁ 5 BENCHMARK QUERIES (TOP-3 RETRIEVAL)")
-    print("=" * 80)
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--only", help="run a single strategy by name")
+    parser.add_argument("--no-rerank", action="store_true", help="skip the cross-encoder strategy")
+    parser.add_argument("--rerankers", default=None, help="comma-separated cross-encoder models (default: RERANKER_MODEL or bge-reranker-v2-m3)")
+    args = parser.parse_args()
 
-    for item in BENCHMARK_QUERIES:
-        qid = item["id"]
-        query = item["query"]
-        gold_ans = item["gold_answer"]
-        filter_meta = item["filter"]
+    load_dotenv(ROOT / ".env", override=False)
+    docs = load_corpus(CORPUS)
+    chunkers = [
+        BaselineChunker("fixed_size"), BaselineChunker("by_sentences"), BaselineChunker("recursive"),
+        StructureAwareChunker(mode="leaf", max_chars=1200), StructureAwareChunker(mode="tree"),
+    ]
+    chunk_sets = {c.name: chunk_corpus(docs, c) for c in chunkers}
 
-        print(f"\n[Query #{qid}]: \"{query}\"")
-        print(f"  * Đáp án chuẩn (Gold Answer): {gold_ans}")
-        if filter_meta:
-            print(f"  * Bộ lọc (Metadata Filter): {filter_meta}")
-            results = store.search_with_filter(query, top_k=3, metadata_filter=filter_meta)
-        else:
-            results = store.search(query, top_k=3)
+    embedder = CachedOpenAIEmbedder()
+    llm = CachedChatLLM()
+    rerankers = [] if args.no_rerank else [
+        CrossEncoderReranker(name) for name in (args.rerankers.split(",") if args.rerankers else [None])
+    ]
+    strategies = build_strategies(chunk_sets, embedder, llm, rerankers)
+    if args.only:
+        strategies = {args.only: strategies[args.only]}
 
-        print("  * Top-3 Chunks tìm được:")
-        found_in_top3 = False
-        top1_correct = False
-        for rank, r in enumerate(results, start=1):
-            doc_origin = r["metadata"].get("doc_id", "N/A")
-            score = r["score"]
-            chunk_id = r["id"]
-            snippet = r["content"][:130].replace("\n", " ").strip()
-            print(f"    {rank}. [{chunk_id}] (doc_id: {doc_origin}, score: {score:.4f})")
-            print(f"       Trích đoạn: \"{snippet}...\"")
-            if item.get("gold_doc") in doc_origin or doc_origin in item.get("gold_doc", ""):
-                found_in_top3 = True
-                if rank == 1:
-                    top1_correct = True
-            elif "hoc-phi" in doc_origin:
-                found_in_top3 = True
+    lines: list[str] = []
+    out = lines.append
+    out(f"KẾT QUẢ BENCHMARK — Lab 7, chủ đề: Học phí / Học bổng / Hỗ trợ tài chính VinUni ({date.today()})")
+    out(f"Corpus: {CORPUS.relative_to(ROOT)} — {len(docs)} tài liệu")
+    out(f"Embedding: {embedder._backend_name} | LLM (HyDE + trả lời): {llm.model_name} | "
+        f"Reranker: {', '.join(r.model_name for r in rerankers) or 'tắt'}")
+    out("Chấm: 2 = chunk liên quan ở top-1 + câu trả lời đúng; 1 = chunk liên quan trong top-3; 0 = không có.")
+    out("'Liên quan' = chunk thuộc tài liệu gold VÀ chứa dữ kiện trả lời (không chỉ đúng doc_id).")
 
-        pts = 2 if (top1_correct or found_in_top3) else 0
-        item["score_pts"] = pts
-        item["found_top3"] = found_in_top3
-        item["top1_doc"] = results[0]["metadata"].get("doc_id", "N/A") if results else "None"
+    out("\n" + "=" * 100 + "\n1. THỐNG KÊ CHUNK (baseline analysis)\n" + "=" * 100)
+    for name, chunks in chunk_sets.items():
+        lens = [len(c.content) for c in chunks]
+        out(f"{name:16} số chunk={len(chunks):4}  dài TB={sum(lens) / len(lens):6.0f}  min={min(lens):4}  max={max(lens):5}")
 
-    total_score = sum(it.get("score_pts", 2) for it in BENCHMARK_QUERIES)
-    top3_count = sum(1 for it in BENCHMARK_QUERIES if it.get("found_top3", True))
+    summary: dict[str, list[dict]] = {name: [] for name in strategies}
+    ab_rows: list[str] = []
+    started = time.time()
+    for query in QUERIES:
+        out("\n" + "=" * 100)
+        out(f"{query['id']} [{query['type']}] {query['question']}")
+        out(f"   filter: {query['filter']}")
+        out(f"   gold  : {query['gold']}")
+        out("=" * 100)
+        for name, retriever in strategies.items():
+            pipeline = RAGPipeline(retriever, llm, top_k=3)
+            result = pipeline.answer(query["question"], metadata_filter=query["filter"])
+            verdict = evaluate(query, result)
+            summary[name].append(verdict)
+            out(f"\n-- {name}: điểm {verdict['score']}/2 | chunk liên quan đầu tiên: {verdict['first_relevant'] or '-'} | "
+                f"doc_id gold trong top-3: {'có' if verdict['doc_hit'] else 'không'} | độ phủ dữ kiện: {verdict['coverage']:.0%} | "
+                f"trả lời đúng: {'có' if verdict['answer_ok'] else 'không'}")
+            if retriever.use_hyde:
+                for lang, passage in retriever.last_hyde.items():
+                    out(f"   HyDE[{lang}]: {passage[:200].replace(chr(10), ' ')}...")
+            for rank, chunk in enumerate(result["chunks"], start=1):
+                meta = chunk["metadata"]
+                mark = "*" if meta["doc_id"] in query["gold_docs"] and has(chunk["content"], query["context_keys"][0]) else " "
+                where = meta.get("section_path", "")[:70]
+                out(f"   {mark}{rank}. score={chunk['score']:.4f} {chunk['id']:42} [{meta.get('audience')}] {where}")
+                out(f"      signals={chunk.get('signals', {})}")
+            out(f"   Trả lời: {result['answer'].replace(chr(10), ' ')[:600]}")
 
-    print("\n" + "=" * 80)
-    print("TỔNG HỢP ĐIỂM CHẤT LƯỢNG TRUY XUẤT (THEO THANG ĐIỂM DOCS/SCORING.MD)")
-    print("=" * 80)
-    print(f"{'#':<3} | {'Câu hỏi':<38} | {'Top-1 Chunk':<20} | {'Điểm':<8}")
-    print("-" * 80)
-    for it in BENCHMARK_QUERIES:
-        q_text = it["query"][:36] + ".." if len(it["query"]) > 36 else it["query"]
-        print(f"{it['id']:<3} | {q_text:<38} | {it['top1_doc']:<20} | {it.get('score_pts', 2)}/2 điểm")
-    print("-" * 80)
-    print(f"👉 TỔNG ĐIỂM TRUY XUẤT (RETRIEVAL QUALITY): {total_score} / 10 ĐIỂM")
-    print(f"👉 TỔNG SỐ CÂU HỎI CÓ CHUNK LIÊN QUAN TRONG TOP-3: {top3_count} / 5 CÂU")
-    print("=" * 80)
+            if query["filter"]:
+                unfiltered = pipeline.answer(query["question"], metadata_filter=None)
+                v2 = evaluate(query, unfiltered)
+                tops = lambda r: ", ".join(f"{c['id']}[{c['metadata'].get('audience')}]" for c in r["chunks"])  # noqa: E731
+                ab_rows.append(
+                    f"{query['id']} | {name:32} | có filter  : điểm {verdict['score']} | {tops(result)}\n"
+                    f"{'':3}| {'':32} | không filter: điểm {v2['score']} | {tops(unfiltered)}\n"
+                    f"{'':3}| {'':32} | trả lời không filter: {unfiltered['answer'].replace(chr(10), ' ')[:300]}"
+                )
 
+    out("\n" + "=" * 100 + "\n2. TỔNG HỢP (điểm /10 theo docs/SCORING.md)\n" + "=" * 100)
+    width = max(len(name) for name in summary) + 2
+    out(f"{'strategy':{width}}" + "".join(f"{q['id']:>5}" for q in QUERIES) + "   tổng   doc-hit@3   relevant@3   MRR    trả lời đúng")
+    for name, verdicts in summary.items():
+        total = sum(v["score"] for v in verdicts)
+        doc_hits = sum(v["doc_hit"] for v in verdicts)
+        rel = sum(bool(v["first_relevant"]) for v in verdicts)
+        mrr = sum(1 / v["first_relevant"] for v in verdicts if v["first_relevant"]) / len(verdicts)
+        answers = sum(v["answer_ok"] for v in verdicts)
+        out(f"{name:{width}}" + "".join(f"{v['score']:>5}" for v in verdicts)
+            + f"   {total:>2}/10   {doc_hits}/5         {rel}/5          {mrr:.2f}   {answers}/5")
+
+    out("\n" + "=" * 100 + "\n3. A/B METADATA FILTER {'audience': 'student'} (các câu cần lọc)\n" + "=" * 100)
+    lines.extend(ab_rows)
+    out(f"\n(thời gian chạy: {time.time() - started:.0f}s)")
+
+    report = "\n".join(lines)
+    print(report)
+    if not args.only:
+        OUTPUT.write_text(report + "\n", encoding="utf-8")
+        print(f"\n-> đã ghi {OUTPUT.name}")
+    return 0
 
 
 if __name__ == "__main__":
-    import io
-    output_buffer = io.StringIO()
-    class Tee:
-        def __init__(self, *streams):
-            self.streams = streams
-        def write(self, data):
-            for s in self.streams:
-                s.write(data)
-        def flush(self):
-            for s in self.streams:
-                s.flush()
-
-    original_stdout = sys.stdout
-    sys.stdout = Tee(original_stdout, output_buffer)
-    try:
-        run_benchmark()
-    finally:
-        sys.stdout = original_stdout
-        Path("ket_qua_benchmark.txt").write_text(output_buffer.getvalue(), encoding="utf-8")
-        print("\n>> Đã lưu toàn bộ kết quả benchmark vào file: ket_qua_benchmark.txt (UTF-8)")
-
+    sys.exit(main())
