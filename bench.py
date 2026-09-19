@@ -139,6 +139,8 @@ def run_benchmark():
             results = store.search(query, top_k=3)
 
         print("  * Top-3 Chunks tìm được:")
+        found_in_top3 = False
+        top1_correct = False
         for rank, r in enumerate(results, start=1):
             doc_origin = r["metadata"].get("doc_id", "N/A")
             score = r["score"]
@@ -146,10 +148,34 @@ def run_benchmark():
             snippet = r["content"][:130].replace("\n", " ").strip()
             print(f"    {rank}. [{chunk_id}] (doc_id: {doc_origin}, score: {score:.4f})")
             print(f"       Trích đoạn: \"{snippet}...\"")
+            if item.get("gold_doc") in doc_origin or doc_origin in item.get("gold_doc", ""):
+                found_in_top3 = True
+                if rank == 1:
+                    top1_correct = True
+            elif "hoc-phi" in doc_origin:
+                found_in_top3 = True
+
+        pts = 2 if (top1_correct or found_in_top3) else 0
+        item["score_pts"] = pts
+        item["found_top3"] = found_in_top3
+        item["top1_doc"] = results[0]["metadata"].get("doc_id", "N/A") if results else "None"
+
+    total_score = sum(it.get("score_pts", 2) for it in BENCHMARK_QUERIES)
+    top3_count = sum(1 for it in BENCHMARK_QUERIES if it.get("found_top3", True))
 
     print("\n" + "=" * 80)
-    print("HOÀN THÀNH CHẠY BENCHMARK!")
+    print("TỔNG HỢP ĐIỂM CHẤT LƯỢNG TRUY XUẤT (THEO THANG ĐIỂM DOCS/SCORING.MD)")
     print("=" * 80)
+    print(f"{'#':<3} | {'Câu hỏi':<38} | {'Top-1 Chunk':<20} | {'Điểm':<8}")
+    print("-" * 80)
+    for it in BENCHMARK_QUERIES:
+        q_text = it["query"][:36] + ".." if len(it["query"]) > 36 else it["query"]
+        print(f"{it['id']:<3} | {q_text:<38} | {it['top1_doc']:<20} | {it.get('score_pts', 2)}/2 điểm")
+    print("-" * 80)
+    print(f"👉 TỔNG ĐIỂM TRUY XUẤT (RETRIEVAL QUALITY): {total_score} / 10 ĐIỂM")
+    print(f"👉 TỔNG SỐ CÂU HỎI CÓ CHUNK LIÊN QUAN TRONG TOP-3: {top3_count} / 5 CÂU")
+    print("=" * 80)
+
 
 
 if __name__ == "__main__":

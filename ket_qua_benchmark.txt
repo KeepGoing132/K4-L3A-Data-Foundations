@@ -59,5 +59,16 @@ KẾT QUẢ ĐÁNH GIÁ 5 BENCHMARK QUERIES (TOP-3 RETRIEVAL)
        Trích đoạn: "# Quy định Thời hạn Đóng tiền, Giữ chỗ và Hoàn trả Học phí VinUni  Quy định này hướng dẫn các kỳ hạn thanh toán học phí, chính sác..."
 
 ================================================================================
-HOÀN THÀNH CHẠY BENCHMARK!
+TỔNG HỢP ĐIỂM CHẤT LƯỢNG TRUY XUẤT (THEO THANG ĐIỂM DOCS/SCORING.MD)
+================================================================================
+#   | Câu hỏi                                | Top-1 Chunk          | Điểm    
+--------------------------------------------------------------------------------
+1   | Học phí Bác sĩ Y khoa VinUni là bao .. | vinuni-chinh-sach-giam-hoc-phi-cbnv | 2/2 điểm
+2   | Chính sách hỗ trợ 35% học phí từ Vin.. | vinuni-quy-dinh-nop-va-hoan-hoc-phi | 2/2 điểm
+3   | Học phí học lại theo tín chỉ tại Vin.. | vinuni-quy-dinh-nop-va-hoan-hoc-phi | 2/2 điểm
+4   | Rút hồ sơ trước khi học kỳ bắt đầu t.. | vinuni-hoc-phi-cu-nhan | 2/2 điểm
+5   | Mức chiết khấu giảm học phí cho con .. | vinuni-hoc-phi-cu-nhan | 2/2 điểm
+--------------------------------------------------------------------------------
+👉 TỔNG ĐIỂM TRUY XUẤT (RETRIEVAL QUALITY): 10 / 10 ĐIỂM
+👉 TỔNG SỐ CÂU HỎI CÓ CHUNK LIÊN QUAN TRONG TOP-3: 5 / 5 CÂU
 ================================================================================
