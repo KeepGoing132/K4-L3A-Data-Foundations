@@ -1,0 +1,63 @@
+=== KHỞI TẠO BENCHMARK: data\university ===
+Tìm thấy 5 tài liệu nguồn.
+Đã chia nhỏ thành tổng cộng: 38 chunks.
+Đã nạp 38 chunks vào EmbeddingStore thành công.
+
+================================================================================
+KẾT QUẢ ĐÁNH GIÁ 5 BENCHMARK QUERIES (TOP-3 RETRIEVAL)
+================================================================================
+
+[Query #1]: "Học phí Bác sĩ Y khoa VinUni là bao nhiêu một năm?"
+  * Đáp án chuẩn (Gold Answer): 815.850.000 VND / năm học (407.925.000 VND / kỳ học).
+  * Top-3 Chunks tìm được:
+    1. [vinuni-chinh-sach-giam-hoc-phi-cbnv#5] (doc_id: vinuni-chinh-sach-giam-hoc-phi-cbnv, score: 0.3439)
+       Trích đoạn: "1. CBNV nộp Giấy khai sinh của sinh viên kèm Đơn đề nghị ưu đãi học phí có xác nhận của Thủ trưởng đơn vị công tác. 2. Phòng Nhân..."
+    2. [vinuni-hoc-phi-tin-chi-hoc-lai#5] (doc_id: vinuni-hoc-phi-tin-chi-hoc-lai, score: 0.2703)
+       Trích đoạn: "3. **Chương trình trao đổi tích hợp:** Tín chỉ học bổ sung trong khuôn khổ chương trình trao đổi với các trường đại học đối tác qu..."
+    3. [vinuni-ho-tro-hoc-phi-35#5] (doc_id: vinuni-ho-tro-hoc-phi-35, score: 0.2329)
+       Trích đoạn: "* Đối với sinh viên đạt Học bổng Tài năng (như Học bổng 50%, 70%, 80%, 100%), mức học bổng này đã bao gồm hoặc được tính toán cộng..."
+
+[Query #2]: "Chính sách hỗ trợ 35% học phí từ Vingroup áp dụng cho những ai và duy trì bao lâu?"
+  * Đáp án chuẩn (Gold Answer): Áp dụng tự động cho tất cả sinh viên trúng tuyển (Việt Nam và quốc tế) và duy trì suốt toàn bộ thời gian học chính thức.
+  * Top-3 Chunks tìm được:
+    1. [vinuni-quy-dinh-nop-va-hoan-hoc-phi#4] (doc_id: vinuni-quy-dinh-nop-va-hoan-hoc-phi, score: 0.2087)
+       Trích đoạn: "* Thí sinh trúng tuyển và được nhận học bổng / hỗ trợ tài chính phải đóng khoản phí xác nhận giữ chỗ là **20.000.000 VND / sinh vi..."
+    2. [vinuni-chinh-sach-giam-hoc-phi-cbnv#2] (doc_id: vinuni-chinh-sach-giam-hoc-phi-cbnv, score: 0.1976)
+       Trích đoạn: "* Áp dụng đối với CBNV đã ký hợp đồng lao động chính thức từ đủ 12 tháng trở lên tính đến thời điểm con nhập học. * Cán bộ, nhân v..."
+    3. [vinuni-ho-tro-hoc-phi-35#1] (doc_id: vinuni-ho-tro-hoc-phi-35, score: 0.1672)
+       Trích đoạn: "* Tất cả sinh viên trúng tuyển chương trình Cử nhân tại VinUni đều được nhận khoản hỗ trợ tài chính tương đương **35% mức học phí..."
+
+[Query #3]: "Học phí học lại theo tín chỉ tại VinUni được tính bằng bao nhiêu phần trăm?"
+  * Đáp án chuẩn (Gold Answer): Tính bằng 50% mức học phí chuẩn theo tín chỉ tương ứng của môn học đó.
+  * Top-3 Chunks tìm được:
+    1. [vinuni-quy-dinh-nop-va-hoan-hoc-phi#2] (doc_id: vinuni-quy-dinh-nop-va-hoan-hoc-phi, score: 0.2874)
+       Trích đoạn: "* **Xử lý nộp muộn:** Sinh viên không hoàn thành học phí đúng hạn mà không có lý do chính đáng được phê duyệt sẽ bị tạm khóa quyền..."
+    2. [vinuni-quy-dinh-nop-va-hoan-hoc-phi#6] (doc_id: vinuni-quy-dinh-nop-va-hoan-hoc-phi, score: 0.2286)
+       Trích đoạn: "## 3. Chính sách Rút hồ sơ và Hoàn trả Học phí..."
+    3. [vinuni-quy-dinh-nop-va-hoan-hoc-phi#0] (doc_id: vinuni-quy-dinh-nop-va-hoan-hoc-phi, score: 0.2076)
+       Trích đoạn: "# Quy định Thời hạn Đóng tiền, Giữ chỗ và Hoàn trả Học phí VinUni  Quy định này hướng dẫn các kỳ hạn thanh toán học phí, chính sác..."
+
+[Query #4]: "Rút hồ sơ trước khi học kỳ bắt đầu thì được hoàn lại bao nhiêu phần trăm học phí?"
+  * Đáp án chuẩn (Gold Answer): Được hoàn trả 90% số học phí thực nộp của học kỳ đó.
+  * Top-3 Chunks tìm được:
+    1. [vinuni-hoc-phi-cu-nhan#5] (doc_id: vinuni-hoc-phi-cu-nhan, score: 0.1705)
+       Trích đoạn: "Học phí niêm yết đã bao gồm trọn gói: * Phí đào tạo, thực hành thí nghiệm và tài liệu giảng dạy chính thức. * Phí sử dụng toàn bộ..."
+    2. [vinuni-hoc-phi-cu-nhan#4] (doc_id: vinuni-hoc-phi-cu-nhan, score: 0.1701)
+       Trích đoạn: "*Ghi chú:* Đơn vị tiền tệ tính bằng Đồng Việt Nam (VND). Mức phí trên chưa bao gồm khoản hỗ trợ 35% học phí từ Nhà sáng lập.  ## 2..."
+    3. [vinuni-quy-dinh-nop-va-hoan-hoc-phi#4] (doc_id: vinuni-quy-dinh-nop-va-hoan-hoc-phi, score: 0.1701)
+       Trích đoạn: "* Thí sinh trúng tuyển và được nhận học bổng / hỗ trợ tài chính phải đóng khoản phí xác nhận giữ chỗ là **20.000.000 VND / sinh vi..."
+
+[Query #5]: "Mức chiết khấu giảm học phí cho con em là bao nhiêu?"
+  * Đáp án chuẩn (Gold Answer): Được giảm thêm 5% học phí niêm yết (cộng dồn với 35% thành 40%). Cần filter audience=student để tránh nhầm với chính sách nhân sự chung.
+  * Bộ lọc (Metadata Filter): {'audience': 'student'}
+  * Top-3 Chunks tìm được:
+    1. [vinuni-hoc-phi-cu-nhan#4] (doc_id: vinuni-hoc-phi-cu-nhan, score: 0.2231)
+       Trích đoạn: "*Ghi chú:* Đơn vị tiền tệ tính bằng Đồng Việt Nam (VND). Mức phí trên chưa bao gồm khoản hỗ trợ 35% học phí từ Nhà sáng lập.  ## 2..."
+    2. [vinuni-quy-dinh-nop-va-hoan-hoc-phi#7] (doc_id: vinuni-quy-dinh-nop-va-hoan-hoc-phi, score: 0.1748)
+       Trích đoạn: "Trong trường hợp sinh viên tự nguyện xin rút khỏi trường và được Ban Giám hiệu chấp thuận bằng văn bản: * **Rút hồ sơ trước ngày b..."
+    3. [vinuni-quy-dinh-nop-va-hoan-hoc-phi#0] (doc_id: vinuni-quy-dinh-nop-va-hoan-hoc-phi, score: 0.1640)
+       Trích đoạn: "# Quy định Thời hạn Đóng tiền, Giữ chỗ và Hoàn trả Học phí VinUni  Quy định này hướng dẫn các kỳ hạn thanh toán học phí, chính sác..."
+
+================================================================================
+HOÀN THÀNH CHẠY BENCHMARK!
+================================================================================
