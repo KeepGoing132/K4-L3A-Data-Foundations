@@ -4,7 +4,15 @@ import os
 import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = lambda *args, **kwargs: None
 
 from src.agent import KnowledgeBaseAgent
 from src.embeddings import (
@@ -21,12 +29,11 @@ from src.models import Document
 from src.store import EmbeddingStore
 
 SAMPLE_FILES = [
-    "data/python_intro.txt",
-    "data/vector_store_notes.md",
-    "data/rag_system_design.md",
-    "data/customer_support_playbook.txt",
-    "data/chunking_experiment_report.md",
-    "data/vi_retrieval_notes.md",
+    "data/university/vinuni-hoc-phi-cu-nhan.md",
+    "data/university/vinuni-ho-tro-hoc-phi-35.md",
+    "data/university/vinuni-hoc-phi-tin-chi-hoc-lai.md",
+    "data/university/vinuni-quy-dinh-nop-va-hoan-hoc-phi.md",
+    "data/university/vinuni-chinh-sach-giam-hoc-phi-cbnv.md",
 ]
 
 
