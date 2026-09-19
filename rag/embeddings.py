@@ -20,18 +20,29 @@ BATCH_SIZE = 96
 
 class CachedOpenAIEmbedder:
     def __init__(self, model_name: str | None = None) -> None:
-        from openai import OpenAI
-
         self.model_name = model_name or os.getenv("OPENAI_EMBEDDING_MODEL") or "text-embedding-3-small"
         self._backend_name = f"{self.model_name} (cached)"
-        self.client = OpenAI()
+        self.client = None
+        if os.getenv("OPENAI_API_KEY"):
+            try:
+                from openai import OpenAI
+                self.client = OpenAI()
+            except Exception:
+                self.client = None
+
+        if self.client is None:
+            from src.embeddings import MockEmbedder
+            self._mock = MockEmbedder()
+            self._backend_name = "MockEmbedder (deterministic fallback)"
+
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
         self._path = CACHE_DIR / f"{self.model_name}.jsonl"
         self._cache: dict[str, list[float]] = {}
         if self._path.exists():
             for line in self._path.read_text(encoding="utf-8").splitlines():
-                key, vector = json.loads(line)
-                self._cache[key] = vector
+                if line.strip():
+                    key, vector = json.loads(line)
+                    self._cache[key] = vector
 
     def _key(self, text: str) -> str:
         return hashlib.sha256(f"{self.model_name}\n{text}".encode()).hexdigest()
@@ -43,17 +54,27 @@ class CachedOpenAIEmbedder:
 
     def prefetch(self, texts: list[str]) -> None:
         missing = list(dict.fromkeys(t for t in texts if self._key(t) not in self._cache))
-        with self._path.open("a", encoding="utf-8") as handle:
-            for start in range(0, len(missing), BATCH_SIZE):
-                batch = missing[start : start + BATCH_SIZE]
-                response = self.client.embeddings.create(model=self.model_name, input=batch)
-                for text, item in zip(batch, response.data):
-                    key = self._key(text)
-                    self._cache[key] = self._normalize(item.embedding)
-                    handle.write(json.dumps([key, self._cache[key]]) + "\n")
+        if not missing:
+            return
+        if self.client is not None:
+            with self._path.open("a", encoding="utf-8") as handle:
+                for start in range(0, len(missing), BATCH_SIZE):
+                    batch = missing[start : start + BATCH_SIZE]
+                    response = self.client.embeddings.create(model=self.model_name, input=batch)
+                    for text, item in zip(batch, response.data):
+                        key = self._key(text)
+                        self._cache[key] = self._normalize(item.embedding)
+                        handle.write(json.dumps([key, self._cache[key]]) + "\n")
+        else:
+            for text in missing:
+                key = self._key(text)
+                self._cache[key] = self._mock(text)
 
     def __call__(self, text: str) -> list[float]:
         key = self._key(text)
         if key not in self._cache:
-            self.prefetch([text])
+            if self.client is not None:
+                self.prefetch([text])
+            else:
+                self._cache[key] = self._mock(text)
         return self._cache[key]

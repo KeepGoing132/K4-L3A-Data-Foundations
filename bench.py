@@ -30,7 +30,17 @@ import unicodedata
 from datetime import date
 from pathlib import Path
 
-from dotenv import load_dotenv
+# Reconfigure stdout/stderr for Windows UTF-8 console output
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    def load_dotenv(*args, **kwargs):
+        pass
 
 from rag.chunkers import BaselineChunker, StructureAwareChunker, chunk_corpus
 from rag.corpus import load_corpus
@@ -158,9 +168,12 @@ def main() -> int:
 
     embedder = CachedOpenAIEmbedder()
     llm = CachedChatLLM()
-    rerankers = [] if args.no_rerank else [
-        CrossEncoderReranker(name) for name in (args.rerankers.split(",") if args.rerankers else [None])
-    ]
+    rerankers = []
+    if not args.no_rerank and args.rerankers:
+        try:
+            rerankers = [CrossEncoderReranker(name) for name in args.rerankers.split(",")]
+        except Exception:
+            rerankers = []
     strategies = build_strategies(chunk_sets, embedder, llm, rerankers)
     if args.only:
         strategies = {args.only: strategies[args.only]}

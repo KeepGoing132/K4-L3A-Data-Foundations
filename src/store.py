@@ -61,6 +61,10 @@ class EmbeddingStore:
         scored.sort(key=lambda x: x["score"], reverse=True)
         return scored[:top_k]
 
+    @staticmethod
+    def _matches(meta: dict, filt: dict) -> bool:
+        return all(meta.get(k) == v for k, v in (filt or {}).items())
+
     def add_documents(self, docs: list[Document]) -> None:
         """
         Embed each document's content and store it.
