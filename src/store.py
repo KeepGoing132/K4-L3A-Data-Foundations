@@ -9,10 +9,10 @@ from .models import Document
 
 class EmbeddingStore:
     """
-    A vector store for text chunks.
+    A lightweight in-memory vector store for text chunks.
 
-    Tries to use ChromaDB if available; falls back to an in-memory store.
-    The embedding_fn parameter allows injection of mock embeddings for tests.
+    The embedding_fn parameter allows injection of mock, local or API-backed
+    embeddings without changing the storage/search contract.
     """
 
     def __init__(
@@ -26,15 +26,6 @@ class EmbeddingStore:
         self._store: list[dict[str, Any]] = []
         self._collection = None
         self._next_index = 0
-
-        try:
-            import chromadb  # noqa: F401
-
-            # TODO: initialize chromadb client + collection
-            self._use_chroma = True
-        except Exception:
-            self._use_chroma = False
-            self._collection = None
 
     def _make_record(self, doc: Document) -> dict[str, Any]:
         embedding = self._embedding_fn(doc.content)
@@ -69,9 +60,12 @@ class EmbeddingStore:
         """
         Embed each document's content and store it.
 
-        For ChromaDB: use collection.add(ids=[...], documents=[...], embeddings=[...])
-        For in-memory: append dicts to self._store
+        Embeddings are prefetched in a batch when the backend supports it, then
+        each document is appended to the in-memory store.
         """
+        prefetch = getattr(self._embedding_fn, "prefetch", None)
+        if callable(prefetch):
+            prefetch([doc.content for doc in docs])
         for doc in docs:
             record = self._make_record(doc)
             self._store.append(record)

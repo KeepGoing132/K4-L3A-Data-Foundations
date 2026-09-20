@@ -4,7 +4,7 @@
 **Mã học viên:** 2A202602951  
 **Nhóm:** K4-L3A (Chủ đề: Dịch vụ & Quy định Đại học — Học phí, Học bổng & Hỗ trợ tài chính VinUni)  
 **Phân công trong nhóm:** Thành viên 3 (Phần 3: Nghiên cứu Baseline & Chiến lược Chunker theo Cấu trúc Heading / Structure-Aware)  
-**Ngày:** 19/09/2026  
+**Ngày:** 20/09/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
@@ -55,14 +55,17 @@ Giải thích cách tôi lập trình các thành phần cốt lõi trong gói `
 > Dùng biểu thức chính quy (regex) `(?<=[.!?])\s+` (cơ chế look-behind) để chia nhỏ văn bản dựa trên ranh giới kết thúc câu mà không làm mất dấu chấm câu. Sau đó, gom các câu lại vào từng chunk sao cho số lượng câu trong mỗi chunk không vượt quá `max_sentences_per_chunk`. Xử lý trường hợp chuỗi rỗng và loại bỏ các khoảng trắng thừa ở hai đầu câu.
 
 **`RecursiveChunker.chunk` / `_split`** — hướng tiếp cận:
-> Thuật toán hoạt động theo nguyên lý đệ quy chia nhỏ dần theo danh sách dấu phân cách có thứ tự ưu tiên: `["\n\n", "\n", " ", ""]`. 
+> Thuật toán hoạt động theo nguyên lý đệ quy chia nhỏ dần theo danh sách dấu phân cách có thứ tự ưu tiên: `["\n\n", "\n", ". ", " ", ""]`.
 > - *Trường hợp cơ sở (Base case):* Nếu độ dài đoạn văn nhỏ hơn hoặc bằng `chunk_size` hoặc đã duyệt hết danh sách phân cách, dừng đệ quy. 
 > - *Trường hợp đệ quy:* Tách đoạn văn theo dấu phân cách hiện tại; nếu đoạn nào vẫn dài hơn `chunk_size`, gọi đệ quy xuống dấu phân cách nhỏ hơn tiếp theo. Sau đó, gom các mảnh nhỏ liền kề lại sát giới hạn `chunk_size` để tạo thành chunk hoàn chỉnh.
+
+**Chiến lược R3 — `StructureAwareChunker`**:
+> Tôi phân tích cây heading Markdown (`#` đến `######`) và ưu tiên giữ nguyên một nhánh nội dung nếu còn trong ngân sách ký tự. Mỗi chunk được gắn header ngữ cảnh gồm tên tài liệu và breadcrumb của mục; bảng Markdown chỉ được tách theo hàng và lặp lại hàng tiêu đề. Nhờ vậy, số tiền hoặc điều kiện không bị tách khỏi tên mục đang áp dụng. Trên 10 tài liệu nhóm, chiến lược `structure_tree` tạo **70 chunks**, dài trung bình **989 ký tự** (min 189, max 2.140).
 
 ### Lớp EmbeddingStore
 
 **`add_documents` + `search`** — hướng tiếp cận:
-> Lưu trữ văn bản và metadata trong danh sách bộ nhớ (in-memory list) dạng từ điển, kèm vector embedding được tính toán bởi hàm `embedding_fn`. Khi gọi hàm `search(query, top_k)`: tạo vector embedding cho câu truy vấn `query`, duyệt qua toàn bộ các tài liệu trong store, tính độ tương tự cosine thông qua hàm `compute_similarity`, sắp xếp giảm dần theo điểm số (`score`) và trả về `top_k` tài liệu cao nhất.
+> Lưu văn bản, metadata và vector do `embedding_fn` sinh ra trong danh sách in-memory. Nếu embedder hỗ trợ `prefetch`, toàn bộ chunk được nhúng theo lô trước khi tạo record. Khi tìm kiếm, hệ thống nhúng truy vấn, tính tích vô hướng với từng vector tài liệu, sắp xếp giảm dần và trả về `top_k`; với các backend đang dùng, vector đã được chuẩn hóa L2 nên tích vô hướng tương đương cosine similarity.
 
 **`search_with_filter` + `delete_document`** — hướng tiếp cận:
 > - `search_with_filter`: Thực hiện lọc siêu dữ liệu (metadata) **TRƯỚC** khi tính toán độ tương tự (Pre-filtering) để tối ưu hiệu năng tính toán và loại trừ dữ liệu không thuộc đối tượng quan tâm. Tài liệu chỉ được đưa vào so khớp cosine nếu tất cả các cặp key-value trong `metadata_filter` đều khớp chính xác với `document.metadata`.
@@ -71,7 +74,7 @@ Giải thích cách tôi lập trình các thành phần cốt lõi trong gói `
 ### Tác tử KnowledgeBaseAgent
 
 **`answer`** — hướng tiếp cận:
-> Truy xuất `top_k` ngữ cảnh liên quan nhất từ `EmbeddingStore` bằng phương thức `search()` hoặc `search_with_filter()`. Nối các đoạn văn bản trích xuất được vào prompt theo mẫu: `Context: [1] <chunk 1>\n[2] <chunk 2>...\nQuestion: <query>\nAnswer based on context:`. Gọi `llm_fn` để tổng hợp câu trả lời; nếu store rỗng, trả về câu thông báo không tìm thấy thông tin để tránh bị ảo giác (hallucination).
+> Truy xuất `top_k` đoạn liên quan từ `EmbeddingStore.search()`, nối nguyên văn các đoạn thành phần `Context`, thêm câu hỏi và chỉ dẫn “chỉ trả lời dựa trên ngữ cảnh”, rồi gọi `llm_fn`. Pipeline benchmark nâng cao trong `rag/pipeline.py` còn đánh số nguồn `[1]`, `[2]`, đưa `doc_id`, `audience`, `document_version` vào nhãn trích dẫn và trả về thông báo không tìm thấy khi retrieval rỗng.
 
 ---
 
@@ -82,55 +85,12 @@ Giải thích cách tôi lập trình các thành phần cốt lõi trong gói `
 ### Kết Quả Kiểm Thử (Test Results)
 
 ```text
-============================= test session starts =============================
-platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0
-rootdir: E:\D\learn_AI\K4-L3A-Data-Foundations
-collected 42 items
+> python -m unittest discover -s tests -v
+...
+----------------------------------------------------------------------
+Ran 42 tests
 
-tests/test_solution.py::TestProjectStructure::test_root_main_entrypoint_exists PASSED [  2%]
-tests/test_solution.py::TestProjectStructure::test_src_package_exists PASSED [  4%]
-tests/test_solution.py::TestClassBasedInterfaces::test_chunker_classes_exist PASSED [  7%]
-tests/test_solution.py::TestClassBasedInterfaces::test_mock_embedder_exists PASSED [  9%]
-tests/test_solution.py::TestFixedSizeChunker::test_chunks_respect_size PASSED [ 11%]
-tests/test_solution.py::TestFixedSizeChunker::test_correct_number_of_chunks_no_overlap PASSED [ 14%]
-tests/test_solution.py::TestFixedSizeChunker::test_empty_text_returns_empty_list PASSED [ 16%]
-tests/test_solution.py::TestFixedSizeChunker::test_no_overlap_no_shared_content PASSED [ 19%]
-tests/test_solution.py::TestFixedSizeChunker::test_overlap_creates_shared_content PASSED [ 21%]
-tests/test_solution.py::TestFixedSizeChunker::test_returns_list PASSED   [ 23%]
-tests/test_solution.py::TestFixedSizeChunker::test_single_chunk_if_text_shorter PASSED [ 26%]
-tests/test_solution.py::TestSentenceChunker::test_chunks_are_strings PASSED [ 28%]
-tests/test_solution.py::TestSentenceChunker::test_respects_max_sentences PASSED [ 30%]
-tests/test_solution.py::TestSentenceChunker::test_returns_list PASSED    [ 33%]
-tests/test_solution.py::TestSentenceChunker::test_single_sentence_max_gives_many_chunks PASSED [ 35%]
-tests/test_solution.py::TestRecursiveChunker::test_chunks_within_size_when_possible PASSED [ 38%]
-tests/test_solution.py::TestRecursiveChunker::test_empty_separators_falls_back_gracefully PASSED [ 40%]
-tests/test_solution.py::TestRecursiveChunker::test_handles_double_newline_separator PASSED [ 42%]
-tests/test_solution.py::TestRecursiveChunker::test_returns_list PASSED   [ 45%]
-tests/test_solution.py::TestEmbeddingStore::test_add_documents_increases_size PASSED [ 47%]
-tests/test_solution.py::TestEmbeddingStore::test_add_more_increases_further PASSED [ 50%]
-tests/test_solution.py::TestEmbeddingStore::test_initial_size_is_zero PASSED [ 52%]
-tests/test_solution.py::TestEmbeddingStore::test_search_results_have_content_key PASSED [ 54%]
-tests/test_solution.py::TestEmbeddingStore::test_search_results_have_score_key PASSED [ 57%]
-tests/test_solution.py::TestEmbeddingStore::test_search_results_sorted_by_score_descending PASSED [ 59%]
-tests/test_solution.py::TestEmbeddingStore::test_search_returns_at_most_top_k PASSED [ 61%]
-tests/test_solution.py::TestEmbeddingStore::test_search_returns_list PASSED [ 64%]
-tests/test_solution.py::TestKnowledgeBaseAgent::test_answer_non_empty PASSED [ 66%]
-tests/test_solution.py::TestKnowledgeBaseAgent::test_answer_returns_string PASSED [ 69%]
-tests/test_solution.py::TestComputeSimilarity::test_identical_vectors_return_1 PASSED [ 71%]
-tests/test_solution.py::TestComputeSimilarity::test_opposite_vectors_return_minus_1 PASSED [ 73%]
-tests/test_solution.py::TestComputeSimilarity::test_orthogonal_vectors_return_0 PASSED [ 76%]
-tests/test_solution.py::TestComputeSimilarity::test_zero_vector_returns_0 PASSED [ 78%]
-tests/test_solution.py::TestCompareChunkingStrategies::test_counts_are_positive PASSED [ 80%]
-tests/test_solution.py::TestCompareChunkingStrategies::test_each_strategy_has_count_and_avg_length PASSED [ 83%]
-tests/test_solution.py::TestCompareChunkingStrategies::test_returns_three_strategies PASSED [ 85%]
-tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_filter_by_department PASSED [ 88%]
-tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_no_filter_returns_all_candidates PASSED [ 90%]
-tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_returns_at_most_top_k PASSED [ 92%]
-tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_reduces_collection_size PASSED [ 95%]
-tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_false_for_nonexistent_doc PASSED [ 97%]
-tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_true_for_existing_doc PASSED [100%]
-
-============================= 42 passed in 0.07s ==============================
+OK
 ```
 
 **Số lượng bài test vượt qua (pass):** **42 / 42 tests (100%)**
@@ -143,14 +103,14 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |:---:|:---|:---|:---:|:---:|:---:|
-| 1 | "Học phí Bác sĩ Y khoa VinUni là bao nhiêu một năm?" | "Mức học phí hàng năm của ngành Y khoa tại trường VinUni." | Cao | **0.8924** | Đúng |
-| 2 | "Rút hồ sơ trước học kỳ được hoàn bao nhiêu phần trăm?" | "Quy định về tỷ lệ hoàn trả tiền học khi thôi học sớm." | Cao | **0.8315** | Đúng |
-| 3 | "Chính sách giảm giá học phí cho con cán bộ nhân viên." | "Điều kiện mượn giáo trình tại thư viện trường." | Thấp | **0.0841** | Đúng |
-| 4 | "Thời hạn nộp học phí học kỳ mùa thu là ngày nào?" | "Hạn chót đóng tiền học kỳ 1 của sinh viên đại học." | Cao | **0.8650** | Đúng |
-| 5 | "Học bổng 100% yêu cầu điểm GPA tối thiểu bao nhiêu?" | "Thực đơn món ăn tại căng tin ký túc xá sinh viên." | Thấp | **0.0312** | Đúng |
+| 1 | "Học phí Bác sĩ Y khoa VinUni là bao nhiêu một năm?" | "Mức học phí hàng năm của ngành Y khoa tại trường VinUni." | Cao | **0,4117** | Đúng |
+| 2 | "Rút hồ sơ trước học kỳ được hoàn bao nhiêu phần trăm?" | "Quy định về tỷ lệ hoàn trả tiền học khi thôi học sớm." | Cao | **0,4629** | Đúng |
+| 3 | "Chính sách giảm giá học phí cho con cán bộ nhân viên." | "Điều kiện mượn giáo trình tại thư viện trường." | Thấp | **0,1885** | Đúng |
+| 4 | "Thời hạn nộp học phí học kỳ mùa thu là ngày nào?" | "Hạn chót đóng tiền học kỳ 1 của sinh viên đại học." | Cao | **0,5675** | Đúng |
+| 5 | "Học bổng 100% yêu cầu điểm GPA tối thiểu bao nhiêu?" | "Thực đơn món ăn tại căng tin ký túc xá sinh viên." | Thấp | **0,2058** | Đúng |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> Kết quả bất ngờ nhất là ở cặp số 2: hai câu hầu như không có từ ngữ trùng lặp (một bên dùng *"rút hồ sơ / hoàn bao nhiêu phần trăm"*, một bên dùng *"tỷ lệ hoàn trả tiền học khi thôi học sớm"*), nhưng mô hình embedding vẫn nhận diện được độ tương tự rất cao (> 0.83). Điều này chứng minh embedding không chỉ đếm tần suất từ khóa đơn thuần mà đã nắm bắt được cấu trúc ngữ nghĩa sâu (semantic representation) của văn bản.
+> Lần chạy hiện tại dùng `offline lexical hashing (512d)` để có thể tái lập mà không cần API key. Cặp 2 vẫn đạt 0,4629 dù cách diễn đạt khác nhau vì còn chia sẻ các tín hiệu như “học”, “hoàn/hoàn trả”; ngược lại hai cặp thấp vẫn có điểm khoảng 0,19–0,21 do từ chung và va chạm feature-hashing. Điều này cho thấy baseline từ vựng phân biệt được chủ đề ở mức cơ bản nhưng không thay thế được embedding ngữ nghĩa đa ngôn ngữ.
 
 ---
 
@@ -158,24 +118,38 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ### Chiến lược của tôi: Chunker theo Cấu trúc Heading / Structure-Aware (`structure_tree`)
 - **Vai trò:** Thành viên 3 (Phần 3 trong nhóm — phụ trách Heading-based & Structure-Aware Chunking).
-- **Ý tưởng thiết kế:** Thay vì cắt cứng theo số lượng ký tự hoặc câu, tôi phân tích cú pháp Markdown của các quy định đại học. Mỗi điều khoản được giữ trọn vẹn trong một khối ngân sách (`budget=1000`), các bảng biểu học phí không bị cắt ngang hàng, và mỗi chunk con được gắn tự động tiền tố đường dẫn ngữ cảnh (Breadcrumb: `Tài liệu > Phần > Mục`).
+- **Ý tưởng thiết kế:** Thay vì cắt cứng theo ký tự hoặc số câu, tôi phân tích cây heading của văn bản quy định. Một mục được giữ nguyên nếu cả nhánh còn trong ngân sách; mục lớn mới được tách theo block, hàng bảng hoặc list item. Mỗi phần đều lặp header ngữ cảnh theo dạng `Tài liệu > Phần > Mục`.
+- **Cấu hình thực nghiệm:** `StructureAwareChunker(mode="tree", max_chars=2200, min_chars=400)`, sinh 70 chunks từ 10 tài liệu. Benchmark cá nhân dùng backend ngoại tuyến tái lập (`offline lexical hashing 512d` + câu trả lời trích xuất), không bật BM25, HyDE hay reranker để đo riêng ảnh hưởng của chunking.
+
+> `REPORT_NHOM.md` lưu số của lần chạy trước bằng `text-embedding-3-small` (fixed 7, sentence 6, structure 8). Báo cáo cá nhân này dùng lần chạy offline mới (fixed 6, sentence 5, structure 8), vì vậy điểm baseline khác nhẹ nhưng kết luận về R3 không thay đổi.
 
 ### Kết quả chạy 5 Benchmark Queries với Chiến lược của tôi (`structure_tree`):
 
 | # | Câu hỏi (Query) | Top-1 Chunk tìm được | Score | Điểm (/2) | Trả lời đúng? |
 |:---:|:---|:---|:---:|:---:|:---:|
-| **Q1** | Học phí niêm yết Cử nhân Điều dưỡng là bao nhiêu? | `hoc-phi-cu-nhan#1` [all] *Học phí niêm yết* | 0.6559 | **2 / 2** | Có (349.650.000 VND) |
-| **Q2** | Thôi học trong 2 tuần đầu hoàn trả bao nhiêu %? | `quy-dinh-tai-chinh-bieu-phi#0` [student] *Hoàn trả 50%* | 0.6101 | **2 / 2** | Có (Hoàn 50%) |
-| **Q3** | Học bổng 100% GPA 2,8 có bị hạ học bổng không? *(có filter)* | `duy-tri-hoc-bong-ho-tro-tai-chinh#2` [student] *Duy trì có ĐK* | 0.6412 | **2 / 2** | Có (Duy trì có điều kiện, gia hạn 1 kỳ) |
-| **Q4** | Có những chính sách ưu đãi hoặc chiết khấu nào? | `quy-dinh-tai-chinh-bieu-phi#24` [student] *Ưu đãi & chiết khấu* | 0.5890 | **2 / 2** | Có (Ưu đãi 2.5%, 10%, 5%) |
-| **Q5** | Hạn nộp hồ sơ hỗ trợ tài chính kỳ Thu là khi nào? *(có filter)* | `quy-dinh-tai-chinh-bieu-phi#25` [student] | 0.5420 | **0 / 2** | Không (Cần dense + HyDE để bắt nguồn Tiếng Anh) |
+| **Q1** | Học phí niêm yết Cử nhân Điều dưỡng là bao nhiêu? | `quy-dinh-tai-chinh-bieu-phi#0` [student] — mục *Học phí niêm yết* | 0,4029 | **2 / 2** | Có — 349.650.000 VND/năm |
+| **Q2** | Thôi học trong 2 tuần đầu hoàn trả bao nhiêu %? | `quy-dinh-tai-chinh-bieu-phi#24` [student] — mục *Bảo lưu và hoàn trả học phí* | 0,5089 | **2 / 2** | Có — hoàn 50% |
+| **Q3** | Học bổng 100% GPA 2,8 có bị hạ không? *(filter `audience=student`)* | `duy-tri-hoc-bong-ho-tro-tai-chinh#2` [student] — mục *Học bổng 100%* | 0,3360 | **2 / 2** | Có — duy trì có điều kiện, gia hạn 1 kỳ |
+| **Q4** | Có những chính sách ưu đãi hoặc chiết khấu nào? | `quy-dinh-tai-chinh-bieu-phi#21` [student] — mục *Ưu đãi & chiết khấu* | 0,4394 | **2 / 2** | Có — 2,5%, 10% và 5% |
+| **Q5** | Hạn nộp hồ sơ hỗ trợ tài chính kỳ Thu là khi nào? *(filter `audience=student`)* | `duy-tri-hoc-bong-ho-tro-tai-chinh#1` [student] | 0,3853 | **0 / 2** | Không — tài liệu đúng bằng tiếng Anh không vào Top-3 |
 
-👉 **TỔNG ĐIỂM TRUY XUẤT CỦA TÔI: 8 / 10 ĐIỂM** (Vượt trội hơn baseline `fixed_size`: 7/10, `by_sentences`: 6/10, và `recursive`: 5/10).
+**Tổng: 8/10** — chunk thực sự chứa dữ kiện có trong Top-3 ở **4/5 câu**, MRR = **0,80**, câu trả lời đạt kiểm tra ở **4/5 câu**. Kết quả đầy đủ nằm trong `ket_qua_benchmark_thanh_vien_3.txt`.
+
+### Thử nghiệm A/B metadata filter
+
+- **Q3:** Có filter, văn bản chính thức `duy-tri-hoc-bong-ho-tro-tai-chinh` lên Top-1 và đạt 2/2. Không filter, ba vị trí đầu đều là FAQ `audience=all`, câu trả lời bị kéo về quy tắc chung “giảm một bậc”, nên điểm giảm còn 0/2.
+- **Q5:** Không filter, trang dành cho tân sinh viên `audience=all` lên Top-1 với hạn ngày 15 sai đối tượng. Có filter đã loại bẫy này, nhưng dense lexical retrieval vẫn không vượt qua khoảng cách Việt–Anh để tìm văn bản GDL-FAO-001; vì vậy cả hai lượt đều 0/2.
+
+Kết luận: metadata filter làm tăng độ chính xác rõ rệt ở Q3 và ngăn dùng sai chính sách ở Q5, nhưng filter không thể bù cho thiếu hụt truy xuất đa ngôn ngữ.
+
+### Failure case
+
+Q5 là lỗi chính. Câu hỏi viết bằng tiếng Việt, trong khi bằng chứng chính xác “20 June – 10 July / July 10th” nằm trong tài liệu tiếng Anh. `structure_tree` bảo toàn đúng mục và bảng thời gian, nhưng dense lexical baseline không đưa tài liệu đó vào Top-3. Hướng cải thiện phù hợp là giữ nguyên chunker R3 rồi bổ sung HyDE/dịch truy vấn Việt–Anh hoặc reranker đa ngôn ngữ; không nên nới gold answer thành câu chung chung “xét trong tháng 7” vì câu đó chưa trả lời được hạn 10/7.
 
 ### So sánh chiến lược của tôi với các thành viên khác trong nhóm:
-1. **So với bạn Tú Tài (`fixed_size`):** Phương pháp của tôi gom các điều khoản học phí theo mục nên không làm bảng biểu bị cắt ngang, giúp trả lời chính xác câu Q2 và Q4 mà chiến lược fixed-size bị cụt thông tin.
-2. **So với bạn Đại Nhân (`by_sentences`):** Chiến lược của tôi duy trì độ dài chunk ổn định xung quanh 989 ký tự, không gặp hiện tượng chunk quá ngắn (11 ký tự) hay quá dài (1772 ký tự), mang lại điểm số tổng thể cao hơn hẳn (8/10 so với 6/10).
-3. **Bài học rút ra:** Chiến lược của tôi giải quyết xuất sắc 4/5 câu hỏi tiếng Việt. Riêng câu Q5 do văn bản gốc được viết bằng tiếng Anh (`huong-dan-de-nghi-ho-tro-tai-chinh.md`), cần phải kết hợp thêm HyDE đa ngữ của bạn Đại Nhân thì hệ thống mới đạt điểm tuyệt đối 10/10.
+1. **So với `fixed_size`:** Cùng lần chạy offline, `structure_tree` đạt 8/10 so với 6/10. Breadcrumb và việc giữ nguyên bảng/mục giúp Q2–Q4 không mất quan hệ giữa điều kiện và con số.
+2. **So với `by_sentences`:** `structure_tree` đạt 8/10 so với 5/10. Sentence chunking tạo 146 chunks có độ dài dao động 11–1.772 ký tự, trong khi cấu trúc cây chỉ tạo 70 chunks và giữ được ngữ cảnh phân cấp.
+3. **Bài học rút ra:** R3 là chiến lược chunking tốt nhất trong các baseline của lần chạy này, nhưng chunking tốt không tự giải quyết được truy vấn đa ngôn ngữ. Q5 cần kết hợp đóng góp hybrid/HyDE của R2; hai kỹ thuật bổ sung cho nhau thay vì thay thế nhau.
 
 ---
 
@@ -187,5 +161,5 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 | Hướng tiếp cận (My Approach) | 10 | 10 / 10 |
 | Hoàn thiện Code (Core Implementation - 42 tests) | 30 | 30 / 30 |
 | Dự đoán độ tương tự (Similarity Predictions) | 5 | 5 / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | 10 | 10 / 10 |
-| **Tổng điểm phần cá nhân** | **60** | **60 / 60** |
+| Kết quả truy xuất của tôi (Competition Results) | 10 | 8 / 10 |
+| **Tổng điểm phần cá nhân** | **60** | **58 / 60** |

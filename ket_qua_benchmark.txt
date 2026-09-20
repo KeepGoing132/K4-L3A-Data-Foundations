@@ -1,6 +1,6 @@
-KẾT QUẢ BENCHMARK — Lab 7, chủ đề: Học phí / Học bổng / Hỗ trợ tài chính VinUni (2026-09-19)
+KẾT QUẢ BENCHMARK — Lab 7, chủ đề: Học phí / Học bổng / Hỗ trợ tài chính VinUni (2026-09-20)
 Corpus: data\hoc-phi-vinuni — 10 tài liệu
-Embedding: MockEmbedder (deterministic fallback) | LLM (HyDE + trả lời): offline-generator | Reranker: tắt
+Embedding: offline lexical hashing (512d) | LLM (HyDE + trả lời): offline-generator | Reranker: tắt
 Chấm: 2 = chunk liên quan ở top-1 + câu trả lời đúng; 1 = chunk liên quan trong top-3; 0 = không có.
 'Liên quan' = chunk thuộc tài liệu gold VÀ chứa dữ kiện trả lời (không chỉ đúng doc_id).
 
@@ -19,70 +19,70 @@ Q1 [tra số liệu] Học phí niêm yết một năm của chương trình C�
    gold  : 349.650.000 VND/năm (174.825.000 VND/kỳ; 9.780.000 VND/tín chỉ).
 ====================================================================================================
 
--- fixed_size: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3175 quy-dinh-tai-chinh-bieu-phi#71             [student] 
+-- fixed_size: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.4485 hoc-phi-cu-nhan#1                          [all]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2635 quy-dinh-tai-chinh-bieu-phi#28             [student] 
+   *2. score=0.4479 quy-dinh-tai-chinh-bieu-phi#1              [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2460 huong-dan-de-nghi-ho-tro-tai-chinh#0       [student] 
+   *3. score=0.3349 faq-hoc-phi-hoc-bong#0                     [all]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: hoc-phi-cu-nhan | đối tượng: all | phiên bản: 2026-2027) động và tự tin.  ## Học phí niêm yết  ĐVT: VND  | Chương trình | Thời gian học chuẩn (năm) | Học phí niêm yết theo năm học | Học phí niêm yết theo kỳ học | Học phí niêm yết theo tín chỉ | |---|---|---|---|---| | Cử nhân Điều dưỡng | 4 | 349.650.000 | 174.825.000 | 9.780.000 | | Bác sĩ Y khoa | 6 | 815.850.000 | 407.925.000 | 27.195.000 | | Cử nhân khác | 4 | 815.850.000 | 407.925.000 | 27.195.000 |  **Lưu ý quan trọng:**  - Học phí niêm yết là mức Học phí được ban hành theo
 
--- by_sentences: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.4453 quy-dinh-tai-chinh-bieu-phi#26             [student] 
+-- by_sentences: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.4308 hoc-phi-cu-nhan#0                          [all]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.3924 quy-dinh-tai-chinh-bieu-phi#10             [student] 
+   *2. score=0.3945 quy-dinh-tai-chinh-bieu-phi#1              [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.3577 hoc-bong-cu-nhan#10                        [all] 
+   *3. score=0.3566 faq-hoc-phi-hoc-bong#0                     [all]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: hoc-phi-cu-nhan | đối tượng: all | phiên bản: 2026-2027) # Học phí chương trình Cử nhân năm học 2026-2027  Tại VinUni, chúng tôi tin rằng mọi sinh viên có năng lực và khát vọng đều xứng đáng được tiếp cận nền giáo dục xuất sắc, không phân biệt điều kiện tài chính. Để đồng hành cùng sinh viên và gia đình, VinUni cung cấp chính sách hỗ trợ học phí từ Nhà Sáng lập, các chương trình học bổng tài năng và hỗ trợ tài chính hào phóng, giúp sinh viên và gia đình lên kế hoạch cho hành trình học tập một cách chủ động và tự tin. ## Học phí ni
 
--- recursive: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.4474 quy-dinh-tai-chinh-bieu-phi#12             [student] 
+-- recursive: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.4179 hoc-phi-cu-nhan#1                          [all]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.3279 duy-tri-hoc-bong-ho-tro-tai-chinh#8        [student] 
+   *2. score=0.3737 quy-dinh-tai-chinh-bieu-phi#2              [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.3248 duy-tri-hoc-bong-ho-tro-tai-chinh#7        [student] 
+   *3. score=0.3469 faq-hoc-phi-hoc-bong#0                     [all]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: hoc-phi-cu-nhan | đối tượng: all | phiên bản: 2026-2027) | Chương trình | Thời gian học chuẩn (năm) | Học phí niêm yết theo năm học | Học phí niêm yết theo kỳ học | Học phí niêm yết theo tín chỉ | |---|---|---|---|---| | Cử nhân Điều dưỡng | 4 | 349.650.000 | 174.825.000 | 9.780.000 | | Bác sĩ Y khoa | 6 | 815.850.000 | 407.925.000 | 27.195.000 | | Cử nhân khác | 4 | 815.850.000 | 407.925.000 | 27.195.000 |  **Lưu ý quan trọng:**  [2] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) |
 
--- structure_leaf: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3757 huong-dan-de-nghi-ho-tro-tai-chinh#0       [student] 1. Purpose and Scope
+-- structure_leaf: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.4109 quy-dinh-tai-chinh-bieu-phi#0              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NI
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2691 ho-tro-tai-chinh-tan-sinh-vien#0           [all] (mở đầu)
+   *2. score=0.3907 hoc-phi-cu-nhan#1                          [all] Học phí niêm yết
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2323 quy-dinh-tai-chinh-bieu-phi#51             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
+    3. score=0.3044 hoc-phi-cu-nhan#2                          [all] Học phí niêm yết
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NIÊM YẾT (phần 1/4)  - Học phí niêm yết là mức Học phí được ban hành theo khung chương trình chuẩn đã công bố tại thời điểm nhập học. - Học phí đã bao gồm phí đào tạo, phí cơ sở vật chất, hệ thống CNTT hỗ trợ, hoạt động Sinh viên (định hướng, dịch vụ y tế và tư vấn tâm lý học đường, cố vấn học t
 
--- structure_tree: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3520 quy-dinh-tai-chinh-bieu-phi#28             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
+-- structure_tree: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.4029 quy-dinh-tai-chinh-bieu-phi#0              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NI
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2520 quy-dinh-tai-chinh-bieu-phi#29             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
+   *2. score=0.3852 hoc-phi-cu-nhan#1                          [all] Học phí niêm yết
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2370 hoc-phi-sau-dai-hoc#0                      [all] (mở đầu)
+    3. score=0.2819 hoc-phi-cu-nhan#2                          [all] Học phí niêm yết
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NIÊM YẾT (phần 1/2)  - Học phí niêm yết là mức Học phí được ban hành theo khung chương trình chuẩn đã công bố tại thời điểm nhập học. - Học phí đã bao gồm phí đào tạo, phí cơ sở vật chất, hệ thống CNTT hỗ trợ, hoạt động Sinh viên (định hướng, dịch vụ y tế và tư vấn tâm lý học đường, cố vấn học t
 
--- tree+bm25: điểm 1/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: không
-   *1. score=0.0313 quy-dinh-tai-chinh-bieu-phi#0              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NI
-      signals={'dense': 6, 'bm25': 2, 'rrf': 0.0313}
-    2. score=0.0298 hoc-phi-sau-dai-hoc#0                      [all] (mở đầu)
-      signals={'dense': 3, 'bm25': 12, 'rrf': 0.0298}
-    3. score=0.0297 quy-dinh-tai-chinh-bieu-phi#21             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
-      signals={'dense': 5, 'bm25': 10, 'rrf': 0.0297}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.0325 quy-dinh-tai-chinh-bieu-phi#0              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NI
+      signals={'dense': 1, 'bm25': 2, 'rrf': 0.0325}
+   *2. score=0.0325 hoc-phi-cu-nhan#1                          [all] Học phí niêm yết
+      signals={'dense': 2, 'bm25': 1, 'rrf': 0.0325}
+    3. score=0.0313 hoc-phi-cu-nhan#2                          [all] Học phí niêm yết
+      signals={'dense': 3, 'bm25': 5, 'rrf': 0.0313}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NIÊM YẾT (phần 1/2)  - Học phí niêm yết là mức Học phí được ban hành theo khung chương trình chuẩn đã công bố tại thời điểm nhập học. - Học phí đã bao gồm phí đào tạo, phí cơ sở vật chất, hệ thống CNTT hỗ trợ, hoạt động Sinh viên (định hướng, dịch vụ y tế và tư vấn tâm lý học đường, cố vấn học t
 
--- tree+bm25+hyde: điểm 1/2 | chunk liên quan đầu tiên: 3 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: không
-   HyDE[en]: You are an officer at the Finance / Financial Aid Office of a university in Vietnam....
-   HyDE[vi]: Bạn là chuyên viên Phòng Tài chính – Công tác sinh viên của một trường đại học tại Việt Nam....
-    1. score=0.0579 quy-dinh-tai-chinh-bieu-phi#21             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
-      signals={'dense': 5, 'hyde_en': 15, 'hyde_vi': 7, 'bm25': 10, 'rrf': 0.0579}
-    2. score=0.0443 faq-hoc-phi-hoc-bong#6                     [all] Học bổng và Hỗ trợ Tài chính > Có những mức học bổng và ưu đãi nào dàn
-      signals={'dense': 20, 'hyde_en': 2, 'bm25': 4, 'rrf': 0.0443}
-   *3. score=0.0438 quy-dinh-tai-chinh-bieu-phi#0              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NI
-      signals={'dense': 6, 'hyde_en': 20, 'bm25': 2, 'rrf': 0.0438}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25+hyde: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   HyDE[en]: Official university policy passage about tuition fee listed tuition fee deadline timeline. Applicable requirements and timelines are stated in the regulation....
+   HyDE[vi]: Quy định chính thức của trường liên quan đến câu hỏi: Học phí niêm yết một năm của chương trình Cử nhân Điều dưỡng là bao nhiêu? Cần đối chiếu đúng đối tượng, điều kiện, số tiền, tỷ lệ và mốc thời gia...
+    1. score=0.0547 khoan-vay-sinh-vien#0                      [all] (mở đầu)
+      signals={'dense': 14, 'hyde_en': 17, 'hyde_vi': 9, 'bm25': 13, 'rrf': 0.0547}
+   *2. score=0.0489 quy-dinh-tai-chinh-bieu-phi#0              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NI
+      signals={'dense': 1, 'hyde_vi': 1, 'bm25': 2, 'rrf': 0.0489}
+   *3. score=0.0487 hoc-phi-cu-nhan#1                          [all] Học phí niêm yết
+      signals={'dense': 2, 'hyde_vi': 2, 'bm25': 1, 'rrf': 0.0487}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: khoan-vay-sinh-vien | đối tượng: all | phiên bản: not-stated) Tài liệu: Chương trình Vay vốn Sinh viên  VinUni đang triển khai Chương trình Vay vốn Sinh viên (hợp tác với các tổ chức ngân hàng), nhằm hỗ trợ tài chính cho những sinh viên có nhu cầu thanh toán linh hoạt trong quá trình học tập.  Một số thông tin nổi bật của chương trình hiện tại:  1. Mức vay tối đa lên tới 100% học phí 2. Lãi suất ưu đãi cố định chỉ 8%/năm cho 4 năm đầu tiên (Đối với một số trường hợp đặc biệt, VinUni có thể hỗ trợ thêm lãi suất, giúp sinh viên chỉ
 
 ====================================================================================================
 Q2 [điều kiện] Nếu thôi học trong vòng 2 tuần đầu của học kỳ thì được hoàn trả bao nhiêu phần trăm học phí?
@@ -90,70 +90,70 @@ Q2 [điều kiện] Nếu thôi học trong vòng 2 tuần đầu của học k�
    gold  : Hoàn trả 50% học phí thực nộp của học kỳ (trước ngày học đầu tiên: 80%; sau 2 tuần: không hoàn).
 ====================================================================================================
 
--- fixed_size: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3146 hoc-bong-cu-nhan#3                         [all] 
+-- fixed_size: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.4411 quy-dinh-tai-chinh-bieu-phi#59             [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2863 huong-dan-de-nghi-ho-tro-tai-chinh#9       [student] 
+    2. score=0.3749 quy-dinh-tai-chinh-bieu-phi#60             [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2518 duy-tri-hoc-bong-ho-tro-tai-chinh#4        [student] 
+    3. score=0.3647 quy-dinh-tai-chinh-bieu-phi#21             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) c học kỳ khi Sinh viên thôi học trước ngày học đầu tiên của khóa học hoặc học kỳ theo lịch ghi trong thông báo gửi Sinh viên của khóa học hoặc học kỳ.     - Hoàn trả 50% Học phí thực nộp của khóa học hoặc học kỳ khi Sinh viên thôi học trong vòng 2 tuần kể từ ngày học đầu tiên của khóa học hoặc học kỳ.   - Không hoàn trả Học phí thực nộp của khóa học hoặc học kỳ khi Sinh viên thôi học sau 2 tuần kể từ ngày đầu tiên của khóa học hoặc học kỳ.   - L
 
--- by_sentences: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3116 quy-dinh-tai-chinh-bieu-phi#2              [student] 
+-- by_sentences: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+    1. score=0.4983 quy-dinh-tai-chinh-bieu-phi#56             [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2777 quy-dinh-tai-chinh-bieu-phi#44             [student] 
+   *2. score=0.4724 quy-dinh-tai-chinh-bieu-phi#55             [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2621 huong-dan-de-nghi-ho-tro-tai-chinh#12      [student] 
+    3. score=0.4149 quy-dinh-tai-chinh-bieu-phi#20             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) - Không hoàn trả Học phí thực nộp của khóa học hoặc học kỳ khi Sinh viên thôi học sau 2 tuần kể từ ngày đầu tiên của khóa học hoặc học kỳ. - Lưu ý: Mỗi học kỳ được xét riêng về thời điểm thôi học và tỷ lệ hoàn trả. Ví dụ trường hợp Sinh viên đã đóng học phí cả năm nhưng thôi học sau 2 tuần từ ngày đầu tiên của học kỳ Mùa Thu nhưng trước khi bắt đầu học kỳ Mùa Xuân sẽ được hoàn trả 80% học phí thực nộp của học kỳ Mùa Xuân.  [2] (nguồn: quy-dinh-t
 
--- recursive: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2857 quy-dinh-tai-chinh-bieu-phi#80             [student] 
+-- recursive: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+    1. score=0.4788 quy-dinh-tai-chinh-bieu-phi#87             [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2695 quy-dinh-tai-chinh-bieu-phi#72             [student] 
+   *2. score=0.4405 quy-dinh-tai-chinh-bieu-phi#86             [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2488 quy-dinh-tai-chinh-bieu-phi#90             [student] 
+    3. score=0.4023 quy-dinh-tai-chinh-bieu-phi#81             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026))   - Lưu ý: Mỗi học kỳ được xét riêng về thời điểm thôi học và tỷ lệ hoàn trả. Ví dụ trường hợp Sinh viên đã đóng học phí cả năm nhưng thôi học sau 2 tuần từ ngày đầu tiên của học kỳ Mùa Thu nhưng trước khi bắt đầu học kỳ Mùa Xuân sẽ được hoàn trả 80% học phí thực nộp của học kỳ Mùa Xuân.  [2] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026))     - Hoàn trả 80% Học phí thực nộp của khóa học hoặc học kỳ
 
--- structure_leaf: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2841 huong-dan-de-nghi-ho-tro-tai-chinh#5       [student] 3. Timelines
+-- structure_leaf: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+    1. score=0.4801 quy-dinh-tai-chinh-bieu-phi#46             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2837 faq-hoc-phi-hoc-bong#3                     [all] Học bổng và Hỗ trợ Tài chính > Điều kiện ứng tuyển học bổng của VinUni
+   *2. score=0.4770 quy-dinh-tai-chinh-bieu-phi#45             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2725 faq-hoc-phi-hoc-bong#6                     [all] Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy tr
+    3. score=0.4090 quy-dinh-tai-chinh-bieu-phi#19             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 4. Chính sách bảo lưu Học phí và hoàn trả Học phí (phần 4/5)    - Lưu ý: Mỗi học kỳ được xét riêng về thời điểm thôi học và tỷ lệ hoàn trả. Ví dụ trường hợp Sinh viên đã đóng học phí cả năm nhưng thôi học sau 2 tuần từ ngày đầu tiên của học kỳ Mùa Thu nhưng trước khi bắt đầu học kỳ
 
--- structure_tree: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2841 huong-dan-de-nghi-ho-tro-tai-chinh#2       [student] 3. Timelines
+-- structure_tree: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.5089 quy-dinh-tai-chinh-bieu-phi#24             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2725 faq-hoc-phi-hoc-bong#3                     [all] Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy tr
+    2. score=0.3821 quy-dinh-tai-chinh-bieu-phi#8              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2579 quy-dinh-tai-chinh-bieu-phi#12             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
+    3. score=0.3670 quy-dinh-tai-chinh-bieu-phi#23             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 4. Chính sách bảo lưu Học phí và hoàn trả Học phí (phần 2/2)  - Hoàn trả Học phí:   - Hoàn trả toàn phần khi có thiên tai, chiến tranh, khủng bố, … hay các sự cố khủng hoảng nghiêm trọng khác mà Nhà trường phải đóng cửa hoặc cho dừng học hoàn toàn mà không có kênh học tập thay thế.
 
--- tree+bm25: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.0318 faq-hoc-phi-hoc-bong#3                     [all] Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy tr
-      signals={'dense': 2, 'bm25': 4, 'rrf': 0.0318}
-    2. score=0.0300 quy-dinh-tai-chinh-bieu-phi#10             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
-      signals={'dense': 12, 'bm25': 2, 'rrf': 0.03}
-    3. score=0.0296 faq-hoc-phi-hoc-bong#0                     [all] Học phí
-      signals={'dense': 9, 'bm25': 6, 'rrf': 0.0296}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.0328 quy-dinh-tai-chinh-bieu-phi#24             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 1, 'bm25': 1, 'rrf': 0.0328}
+    2. score=0.0317 quy-dinh-tai-chinh-bieu-phi#23             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 3, 'bm25': 3, 'rrf': 0.0317}
+    3. score=0.0308 faq-hoc-phi-hoc-bong#3                     [all] Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy tr
+      signals={'dense': 6, 'bm25': 4, 'rrf': 0.0308}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 4. Chính sách bảo lưu Học phí và hoàn trả Học phí (phần 2/2)  - Hoàn trả Học phí:   - Hoàn trả toàn phần khi có thiên tai, chiến tranh, khủng bố, … hay các sự cố khủng hoảng nghiêm trọng khác mà Nhà trường phải đóng cửa hoặc cho dừng học hoàn toàn mà không có kênh học tập thay thế.
 
--- tree+bm25+hyde: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-   HyDE[en]: You are an officer at the Finance / Financial Aid Office of a university in Vietnam....
-   HyDE[vi]: Bạn là chuyên viên Phòng Tài chính – Công tác sinh viên của một trường đại học tại Việt Nam....
-    1. score=0.0548 quy-dinh-tai-chinh-bieu-phi#2              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
-      signals={'dense': 17, 'hyde_en': 6, 'hyde_vi': 16, 'bm25': 14, 'rrf': 0.0548}
-    2. score=0.0464 quy-dinh-tai-chinh-bieu-phi#10             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
-      signals={'dense': 12, 'hyde_en': 1, 'bm25': 2, 'rrf': 0.0464}
-    3. score=0.0457 huong-dan-de-nghi-ho-tro-tai-chinh#2       [student] 3. Timelines
-      signals={'dense': 1, 'hyde_en': 13, 'hyde_vi': 4, 'rrf': 0.0457}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25+hyde: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   HyDE[en]: Official university policy passage about tuition fee listed tuition fee refund reimbursement withdrawal from study deadline timeline. Applicable requirements and timelines are stated in the regulation...
+   HyDE[vi]: Quy định chính thức của trường liên quan đến câu hỏi: Nếu thôi học trong vòng 2 tuần đầu của học kỳ thì được hoàn trả bao nhiêu phần trăm học phí? Cần đối chiếu đúng đối tượng, điều kiện, số tiền, tỷ ...
+   *1. score=0.0635 quy-dinh-tai-chinh-bieu-phi#24             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 1, 'hyde_en': 10, 'hyde_vi': 1, 'bm25': 1, 'rrf': 0.0635}
+    2. score=0.0625 quy-dinh-tai-chinh-bieu-phi#23             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 3, 'hyde_en': 6, 'hyde_vi': 4, 'bm25': 3, 'rrf': 0.0625}
+    3. score=0.0615 quy-dinh-tai-chinh-bieu-phi#10             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
+      signals={'dense': 15, 'hyde_en': 2, 'hyde_vi': 3, 'bm25': 2, 'rrf': 0.0615}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 4. Chính sách bảo lưu Học phí và hoàn trả Học phí (phần 2/2)  - Hoàn trả Học phí:   - Hoàn trả toàn phần khi có thiên tai, chiến tranh, khủng bố, … hay các sự cố khủng hoảng nghiêm trọng khác mà Nhà trường phải đóng cửa hoặc cho dừng học hoàn toàn mà không có kênh học tập thay thế.
 
 ====================================================================================================
 Q3 [điều kiện — cần lọc audience] Học bổng 100% mà điểm trung bình năm học chỉ đạt 2,8 thì có bị hạ học bổng không?
@@ -161,70 +161,70 @@ Q3 [điều kiện — cần lọc audience] Học bổng 100% mà điểm trung
    gold  : Không bị hạ ngay: GPA năm học 2,50–3,19 được 'duy trì học bổng có điều kiện', gia hạn thêm 1 học kỳ để cải thiện kết quả và thể hiện E.X.C.E.L; chỉ tự động hạ 1 bậc khi GPA 0,0–2,49 (GDL-SAM-004 V2.1). Bẫy: FAQ tuyển sinh (audience=all) nói chung chung là 'giảm 1 bậc (10%)'.
 ====================================================================================================
 
--- fixed_size: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3171 quy-dinh-tai-chinh-bieu-phi#17             [student] 
+-- fixed_size: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+    1. score=0.3184 quy-dinh-tai-chinh-bieu-phi#49             [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2872 quy-dinh-tai-chinh-bieu-phi#66             [student] 
+   *2. score=0.3072 duy-tri-hoc-bong-ho-tro-tai-chinh#4        [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2868 huong-dan-de-nghi-ho-tro-tai-chinh#6       [student] 
+    3. score=0.2726 duy-tri-hoc-bong-ho-tro-tai-chinh#0        [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026))  áp dụng đồng thời (cộng dồn) các mức Học bổng tài năng, Học bổng phụ, Hỗ trợ tài chính nhưng tối đa không vượt quá 100% Học phí niêm yết. - Mức Học bổng, Hỗ trợ tài chính, Hỗ trợ phát triển giáo dục được tính trên Học phí niêm yết và được công bố theo từng năm học. - Học bổng Tài năng được áp dụng cho toàn bộ thời gian học của Sinh viên và không được xem xét để nâng cấp học bổng. Sinh viên có cơ hội tham gia các nguồn hỗ trợ tài chính khác tron
 
--- by_sentences: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.4235 quy-dinh-tai-chinh-bieu-phi#53             [student] 
+-- by_sentences: điểm 1/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: không
+   *1. score=0.3264 duy-tri-hoc-bong-ho-tro-tai-chinh#5        [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2632 quy-dinh-tai-chinh-bieu-phi#37             [student] 
+    2. score=0.3079 quy-dinh-tai-chinh-bieu-phi#44             [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2078 quy-dinh-tai-chinh-bieu-phi#7              [student] 
+    3. score=0.2583 quy-dinh-tai-chinh-bieu-phi#36             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: duy-tri-hoc-bong-ho-tro-tai-chinh | đối tượng: student | phiên bản: GDL-SAM-004-V2.1 (04/09/2025)) Hoàn thành bản tự đánh giá EXCEL và gặp Cố vấn để thảo luận về bản tự đánh giá. - **Lưu ý:** Nếu Sinh viên không đạt yêu cầu tối thiểu về học lực, hai phương án sẽ được thực hiện như sau:   - (a) Tự Động hạ 1 bậc học bổng - nếu điểm trung bình chung năm học xét đạt từ 0,0 – 2,49 (dưới mức học lực khá). - (b) Duy trì học bổng có điều kiện - Nếu điểm trung bình chung năm học xét đạt từ 2,50 - 3,19 (tương đương học lực khá trở lên).  [2
 
--- recursive: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3514 quy-dinh-tai-chinh-bieu-phi#67             [student] 
+-- recursive: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
+    1. score=0.3211 duy-tri-hoc-bong-ho-tro-tai-chinh#5        [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2434 quy-dinh-tai-chinh-bieu-phi#61             [student] 
+    2. score=0.3049 quy-dinh-tai-chinh-bieu-phi#60             [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2323 quy-dinh-tai-chinh-bieu-phi#33             [student] 
+    3. score=0.2997 quy-dinh-tai-chinh-bieu-phi#70             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: duy-tri-hoc-bong-ho-tro-tai-chinh | đối tượng: student | phiên bản: GDL-SAM-004-V2.1 (04/09/2025)) - **Lưu ý:** Nếu Sinh viên không đạt yêu cầu tối thiểu về học lực, hai phương án sẽ được thực hiện như sau:   - (a) Tự Động hạ 1 bậc học bổng - nếu điểm trung bình chung năm học xét đạt từ 0,0 – 2,49 (dưới mức học lực khá).  [2] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) ### 2. Học phí niêm yết và chính sách học bổng  [3] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | ph
 
--- structure_leaf: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2676 huong-dan-de-nghi-ho-tro-tai-chinh#0       [student] 1. Purpose and Scope
+-- structure_leaf: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.3713 duy-tri-hoc-bong-ho-tro-tai-chinh#3        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2525 quy-dinh-tai-chinh-bieu-phi#43             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+    2. score=0.2891 duy-tri-hoc-bong-ho-tro-tai-chinh#4        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 2. Học bổng
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2052 quy-dinh-tai-chinh-bieu-phi#39             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+    3. score=0.2794 quy-dinh-tai-chinh-bieu-phi#36             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: duy-tri-hoc-bong-ho-tro-tai-chinh | đối tượng: student | phiên bản: GDL-SAM-004-V2.1 (04/09/2025)) Tài liệu: Quy định duy trì Học bổng đầu vào và Hỗ trợ tài chính Mục: 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng Tài năng — mức Toàn phần và 100% (phần 2/2)  - **Lưu ý:** Nếu Sinh viên không đạt yêu cầu tối thiểu về học lực, hai phương án sẽ được thực hiện như sau:   - (a) Tự Động hạ 1 bậc học bổng - nếu điểm trung bình chung năm học xét đạt từ 0,0 – 2,49 (dưới mức học lực khá).   - (b) Duy trì học bổng có đ
 
--- structure_tree: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: không
-    1. score=0.2296 quy-dinh-tai-chinh-bieu-phi#27             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
+-- structure_tree: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.3360 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng
       signals={'dense': 1, 'rrf': 0.0164}
-   *2. score=0.2239 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng 
+    2. score=0.2891 duy-tri-hoc-bong-ho-tro-tai-chinh#3        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 2. Học bổng
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.1844 huong-dan-de-nghi-ho-tro-tai-chinh#1       [student] 2. Eligibility Criteria
+    3. score=0.2649 quy-dinh-tai-chinh-bieu-phi#24             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: duy-tri-hoc-bong-ho-tro-tai-chinh | đối tượng: student | phiên bản: GDL-SAM-004-V2.1 (04/09/2025)) Tài liệu: Quy định duy trì Học bổng đầu vào và Hỗ trợ tài chính Mục: 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng Tài năng — mức Toàn phần và 100%  - **Mức hỗ trợ:** Toàn phần và 100% - **Điều kiện duy trì:**   1. Duy trì điểm trung bình chung tích lũy (CGPA) từ 3,2 trở lên trong năm học được đánh giá (trung bình chung GPA của hai học kỳ chính: Học kỳ Mùa thu và Học kỳ Mùa xuân).   2. Duy trì tình trạng kỷ lu
 
--- tree+bm25: điểm 1/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: không
-   *1. score=0.0325 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng 
-      signals={'dense': 2, 'bm25': 1, 'rrf': 0.0325}
-    2. score=0.0313 duy-tri-hoc-bong-ho-tro-tai-chinh#4        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào
-      signals={'dense': 5, 'bm25': 3, 'rrf': 0.0313}
-    3. score=0.0302 duy-tri-hoc-bong-ho-tro-tai-chinh#3        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 2. Học bổng 
-      signals={'dense': 11, 'bm25': 2, 'rrf': 0.0302}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.0328 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng
+      signals={'dense': 1, 'bm25': 1, 'rrf': 0.0328}
+    2. score=0.0323 duy-tri-hoc-bong-ho-tro-tai-chinh#3        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 2. Học bổng
+      signals={'dense': 2, 'bm25': 2, 'rrf': 0.0323}
+    3. score=0.0306 quy-dinh-tai-chinh-bieu-phi#24             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 3, 'bm25': 8, 'rrf': 0.0306}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: duy-tri-hoc-bong-ho-tro-tai-chinh | đối tượng: student | phiên bản: GDL-SAM-004-V2.1 (04/09/2025)) Tài liệu: Quy định duy trì Học bổng đầu vào và Hỗ trợ tài chính Mục: 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng Tài năng — mức Toàn phần và 100%  - **Mức hỗ trợ:** Toàn phần và 100% - **Điều kiện duy trì:**   1. Duy trì điểm trung bình chung tích lũy (CGPA) từ 3,2 trở lên trong năm học được đánh giá (trung bình chung GPA của hai học kỳ chính: Học kỳ Mùa thu và Học kỳ Mùa xuân).   2. Duy trì tình trạng kỷ lu
 
--- tree+bm25+hyde: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: không
-   HyDE[en]: You are an officer at the Finance / Financial Aid Office of a university in Vietnam....
-   HyDE[vi]: Bạn là chuyên viên Phòng Tài chính – Công tác sinh viên của một trường đại học tại Việt Nam....
-    1. score=0.0464 duy-tri-hoc-bong-ho-tro-tai-chinh#4        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào
-      signals={'dense': 5, 'hyde_en': 6, 'bm25': 3, 'rrf': 0.0464}
-   *2. score=0.0460 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng 
-      signals={'dense': 2, 'hyde_vi': 14, 'bm25': 1, 'rrf': 0.046}
-    3. score=0.0458 duy-tri-hoc-bong-ho-tro-tai-chinh#3        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 2. Học bổng 
-      signals={'dense': 11, 'hyde_en': 4, 'bm25': 2, 'rrf': 0.0458}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25+hyde: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
+   HyDE[en]: Official university policy passage about scholarship merit scholarship. Applicable requirements and timelines are stated in the regulation....
+   HyDE[vi]: Quy định chính thức của trường liên quan đến câu hỏi: Học bổng 100% mà điểm trung bình năm học chỉ đạt 2,8 thì có bị hạ học bổng không? Cần đối chiếu đúng đối tượng, điều kiện, số tiền, tỷ lệ và mốc t...
+    1. score=0.0572 quy-dinh-tai-chinh-bieu-phi#1              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NI
+      signals={'dense': 9, 'hyde_en': 19, 'hyde_vi': 8, 'bm25': 5, 'rrf': 0.0572}
+    2. score=0.0556 quy-dinh-tai-chinh-bieu-phi#28             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
+      signals={'dense': 19, 'hyde_en': 8, 'hyde_vi': 15, 'bm25': 7, 'rrf': 0.0556}
+    3. score=0.0550 quy-dinh-tai-chinh-bieu-phi#23             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 11, 'hyde_en': 17, 'hyde_vi': 11, 'bm25': 12, 'rrf': 0.055}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > I. HỌC PHÍ NIÊM YẾT (phần 2/2)  - SV học bổ sung tín chỉ khi học cùng lúc hai chương trình (double degree) tại VinUni - SV học bổ sung tín chỉ vượt quá khung chương trình đào tạo chuẩn đã công bố tại thời điểm nhập học (1 chuyên ngành chính + tối đa 1 chuyên ngành phụ), ví dụ: khi học cùng lúc hai chuyên n
 
 ====================================================================================================
 Q4 [liệt kê] Có những chính sách ưu đãi học phí hoặc chiết khấu đóng phí nào?
@@ -232,70 +232,70 @@ Q4 [liệt kê] Có những chính sách ưu đãi học phí hoặc chiết kh�
    gold  : Ưu đãi Gia đình giảm 2,5% (từ người thứ 2); ưu đãi Cựu sinh viên 10%; chiết khấu 5% khi đóng học phí và phí KTX cả năm đúng hạn. Ưu đãi cựu SV không cộng với ưu đãi gia đình.
 ====================================================================================================
 
--- fixed_size: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2631 faq-hoc-phi-hoc-bong#2                     [all] 
+-- fixed_size: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 67% | trả lời đúng: không
+    1. score=0.3611 quy-dinh-tai-chinh-bieu-phi#8              [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2540 quy-dinh-tai-chinh-bieu-phi#63             [student] 
+   *2. score=0.3500 quy-dinh-tai-chinh-bieu-phi#50             [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2328 quy-dinh-tai-chinh-bieu-phi#3              [student] 
+    3. score=0.3363 quy-dinh-tai-chinh-bieu-phi#54             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) ược thông báo. - Khoản phí này KHÔNG được hoàn trả hay chuyển nhượng trong bất kỳ trường hợp nào.  #### 2. Phí xác nhận quyền hưởng ưu đãi Học bổng/Ưu đãi Học phí/Hỗ trợ tài chính  - Phí xác nhận quyền hưởng ưu đãi Học bổng/ Ưu đãi Học phí/ Hỗ trợ tài chính là phí để xác nhận suất Học bổng / Ưu đãi Học phí/ Hỗ trợ tài chính mà Ứng viên đã được trao sau khi có kết quả tuyển sinh sơ tuyển. - Mức phí: 20.000.000 đồng/Ứng viên - Ứng viên nộp phí the
 
--- by_sentences: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3250 quy-dinh-tai-chinh-bieu-phi#22             [student] 
+-- by_sentences: điểm 1/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 67% | trả lời đúng: không
+   *1. score=0.4006 quy-dinh-tai-chinh-bieu-phi#46             [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2863 huong-dan-de-nghi-ho-tro-tai-chinh#5       [student] 
+    2. score=0.3846 quy-dinh-tai-chinh-bieu-phi#6              [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2153 quy-dinh-tai-chinh-bieu-phi#53             [student] 
+    3. score=0.3340 quy-dinh-tai-chinh-bieu-phi#40             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Chính sách ưu đãi học phí và chiết khấu đóng phí  #### 2.1. Ưu đãi học phí cho Gia đình  - Sinh viên/học viên được giảm 2,5% học phí niêm yết khi chứng minh được mình có người thân trong gia đình (bao gồm: anh/chị/em ruột, cha, mẹ, vợ, chồng hoặc con hợp pháp) đang cùng theo học chương trình Đại học hoặc chương trình Sau đại học tại VinUni. - Ưu đãi được áp dụng từ người thứ 2 trong gia đình.  [2] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng:
 
--- recursive: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 33% | trả lời đúng: không
-    1. score=0.3515 khoan-vay-sinh-vien#2                      [all] 
+-- recursive: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
+    1. score=0.7032 quy-dinh-tai-chinh-bieu-phi#72             [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.3302 faq-hoc-phi-hoc-bong#9                     [all] 
+    2. score=0.4103 quy-dinh-tai-chinh-bieu-phi#12             [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.3265 huong-dan-de-nghi-ho-tro-tai-chinh#14      [student] 
+    3. score=0.3496 quy-dinh-tai-chinh-bieu-phi#78             [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) ### 2. Chính sách ưu đãi học phí và chiết khấu đóng phí  #### 2.1. Ưu đãi học phí cho Gia đình  [2] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) #### 2. Phí xác nhận quyền hưởng ưu đãi Học bổng/Ưu đãi Học phí/Hỗ trợ tài chính  [3] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) - Chính sách ưu đãi học phí đặc biệt cho cựu sinh viên không được áp dụng
 
--- structure_leaf: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3140 huong-dan-de-nghi-ho-tro-tai-chinh#4       [student] 2. Eligibility Criteria
+-- structure_leaf: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 67% | trả lời đúng: không
+    1. score=0.5334 quy-dinh-tai-chinh-bieu-phi#40             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2196 faq-hoc-phi-hoc-bong#7                     [all] Học bổng và Hỗ trợ Tài chính > Trong thực tế, sinh viên có thường được
+    2. score=0.4769 quy-dinh-tai-chinh-bieu-phi#41             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2194 quy-dinh-tai-chinh-bieu-phi#17             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
+    3. score=0.4475 quy-dinh-tai-chinh-bieu-phi#39             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 2. Chính sách ưu đãi học phí và chiết khấu đóng phí > 2.3. Chiết khấu đóng phí theo năm học  - Sinh viên đóng học phí và phí ký túc xá cho cả năm học sẽ được hưởng mức chiết khấu tương ứng 5% tính trên số tiền phải thu trước chiết khấu. - Ưu đãi chỉ áp dụng trong trường hợp sinh vi
 
--- structure_tree: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3140 huong-dan-de-nghi-ho-tro-tai-chinh#1       [student] 2. Eligibility Criteria
+-- structure_tree: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.4394 quy-dinh-tai-chinh-bieu-phi#21             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.1846 quy-dinh-tai-chinh-bieu-phi#28             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
+    2. score=0.3579 quy-dinh-tai-chinh-bieu-phi#3              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.1765 quy-dinh-tai-chinh-bieu-phi#4              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
+    3. score=0.3355 quy-dinh-tai-chinh-bieu-phi#22             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 2. Chính sách ưu đãi học phí và chiết khấu đóng phí  #### 2.1. Ưu đãi học phí cho Gia đình  - Sinh viên/học viên được giảm 2,5% học phí niêm yết khi chứng minh được mình có người thân trong gia đình (bao gồm: anh/chị/em ruột, cha, mẹ, vợ, chồng hoặc con hợp pháp) đang cùng theo học
 
--- tree+bm25: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.0310 quy-dinh-tai-chinh-bieu-phi#10             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
-      signals={'dense': 4, 'bm25': 5, 'rrf': 0.031}
-    2. score=0.0308 quy-dinh-tai-chinh-bieu-phi#28             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
-      signals={'dense': 2, 'bm25': 8, 'rrf': 0.0308}
-    3. score=0.0301 quy-dinh-tai-chinh-bieu-phi#22             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
-      signals={'dense': 7, 'bm25': 6, 'rrf': 0.0301}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25: điểm 2/2 | chunk liên quan đầu tiên: 1 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   *1. score=0.0328 quy-dinh-tai-chinh-bieu-phi#21             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 1, 'bm25': 1, 'rrf': 0.0328}
+    2. score=0.0320 quy-dinh-tai-chinh-bieu-phi#3              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
+      signals={'dense': 2, 'bm25': 3, 'rrf': 0.032}
+    3. score=0.0312 quy-dinh-tai-chinh-bieu-phi#18             [student] B. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ CHƯƠNG TRÌNH SAU ĐẠI HỌC > 4. Các lo
+      signals={'dense': 4, 'bm25': 4, 'rrf': 0.0312}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 2. Chính sách ưu đãi học phí và chiết khấu đóng phí  #### 2.1. Ưu đãi học phí cho Gia đình  - Sinh viên/học viên được giảm 2,5% học phí niêm yết khi chứng minh được mình có người thân trong gia đình (bao gồm: anh/chị/em ruột, cha, mẹ, vợ, chồng hoặc con hợp pháp) đang cùng theo học
 
--- tree+bm25+hyde: điểm 1/2 | chunk liên quan đầu tiên: 2 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: không
-   HyDE[en]: You are an officer at the Finance / Financial Aid Office of a university in Vietnam....
-   HyDE[vi]: Bạn là chuyên viên Phòng Tài chính – Công tác sinh viên của một trường đại học tại Việt Nam....
-    1. score=0.0474 quy-dinh-tai-chinh-bieu-phi#10             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
-      signals={'dense': 4, 'hyde_en': 1, 'bm25': 5, 'rrf': 0.0474}
-   *2. score=0.0447 quy-dinh-tai-chinh-bieu-phi#21             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
-      signals={'hyde_en': 15, 'hyde_vi': 7, 'bm25': 1, 'rrf': 0.0447}
-    3. score=0.0440 faq-hoc-phi-hoc-bong#0                     [all] Học phí
-      signals={'dense': 5, 'hyde_vi': 8, 'bm25': 12, 'rrf': 0.044}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+-- tree+bm25+hyde: điểm 1/2 | chunk liên quan đầu tiên: 3 | doc_id gold trong top-3: có | độ phủ dữ kiện: 100% | trả lời đúng: có
+   HyDE[en]: Official university policy passage about tuition fee listed tuition fee payment discount. Applicable requirements and timelines are stated in the regulation....
+   HyDE[vi]: Quy định chính thức của trường liên quan đến câu hỏi: Có những chính sách ưu đãi học phí hoặc chiết khấu đóng phí nào? Cần đối chiếu đúng đối tượng, điều kiện, số tiền, tỷ lệ và mốc thời gian trong vă...
+    1. score=0.0593 quy-dinh-tai-chinh-bieu-phi#23             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 6, 'hyde_en': 10, 'hyde_vi': 4, 'bm25': 10, 'rrf': 0.0593}
+    2. score=0.0563 quy-dinh-tai-chinh-bieu-phi#28             [student] E. CÁC QUY ĐỊNH KHÁC LIÊN QUAN > 1. Thời hạn, hình thức nộp Học phí, c
+      signals={'dense': 18, 'hyde_en': 12, 'hyde_vi': 7, 'bm25': 8, 'rrf': 0.0563}
+   *3. score=0.0492 quy-dinh-tai-chinh-bieu-phi#21             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
+      signals={'dense': 1, 'hyde_vi': 1, 'bm25': 1, 'rrf': 0.0492}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU ĐÃI KHÁC > 4. Chính sách bảo lưu Học phí và hoàn trả Học phí (phần 1/2)  - Học phí và các phí khác đã nộp không được bảo lưu hoặc hoàn lại ngoại trừ các trường hợp được phép theo Quy định Tài chính này và phải được Nhà trường phê duyệt theo Đơn xin hoàn trả/bảo lưu Học phí bằng văn bản của Si
 
 ====================================================================================================
 Q5 [mốc thời gian (hỏi tiếng Việt, nguồn tiếng Anh) — cần lọc audience] Hạn nộp hồ sơ xin hỗ trợ tài chính cho học kỳ mùa Thu là khi nào?
@@ -303,127 +303,127 @@ Q5 [mốc thời gian (hỏi tiếng Việt, nguồn tiếng Anh) — cần lọ
    gold  : Đợt nộp 20/6 – 10/7 (hạn 10/7), hạn xử lý 02/8, áp dụng cho học kỳ Thu (GDL-FAO-001). Bẫy: trang tân sinh viên (audience=all) ghi hạn '23:59 ngày 15 của tháng liền kề trước'.
 ====================================================================================================
 
--- fixed_size: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3151 quy-dinh-tai-chinh-bieu-phi#31             [student] 
+-- fixed_size: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
+    1. score=0.4352 ho-tro-tai-chinh-sinh-vien-dang-hoc#0      [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2707 huong-dan-de-nghi-ho-tro-tai-chinh#3       [student] 
+    2. score=0.3969 duy-tri-hoc-bong-ho-tro-tai-chinh#1        [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2498 quy-dinh-tai-chinh-bieu-phi#41             [student] 
+    3. score=0.3811 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-sinh-vien-dang-hoc | đối tượng: student | phiên bản: not-stated) # Hỗ trợ tài chính dành cho sinh viên đang học  Trong quá trình học, nếu sinh viên gặp khó khăn tài chính phát sinh đột xuất – chẳng hạn như mất nguồn thu nhập của gia đình, chi phí y tế khẩn cấp, hoặc các tình huống bất ngờ khác – có thể nộp hồ sơ đề nghị xét Hỗ trợ Tài chính bổ sung, ngoài khoản hỗ trợ ban đầu khi nhập học. Chương trình này nhằm đảm bảo rằng không sinh viên nào phải gián đoạn việc học vì lý do tài chính.  VinUni tiến hành hai kỳ xé
 
--- by_sentences: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2450 quy-dinh-tai-chinh-bieu-phi#53             [student] 
+-- by_sentences: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
+    1. score=0.4356 ho-tro-tai-chinh-sinh-vien-dang-hoc#0      [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2445 huong-dan-de-nghi-ho-tro-tai-chinh#11      [student] 
+    2. score=0.4234 duy-tri-hoc-bong-ho-tro-tai-chinh#12       [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2160 quy-dinh-tai-chinh-bieu-phi#54             [student] 
+    3. score=0.3615 duy-tri-hoc-bong-ho-tro-tai-chinh#7        [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-sinh-vien-dang-hoc | đối tượng: student | phiên bản: not-stated) # Hỗ trợ tài chính dành cho sinh viên đang học  Trong quá trình học, nếu sinh viên gặp khó khăn tài chính phát sinh đột xuất – chẳng hạn như mất nguồn thu nhập của gia đình, chi phí y tế khẩn cấp, hoặc các tình huống bất ngờ khác – có thể nộp hồ sơ đề nghị xét Hỗ trợ Tài chính bổ sung, ngoài khoản hỗ trợ ban đầu khi nhập học. Chương trình này nhằm đảm bảo rằng không sinh viên nào phải gián đoạn việc học vì lý do tài chính. VinUni tiến hành hai kỳ xét
 
 -- recursive: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.3268 quy-dinh-tai-chinh-bieu-phi#2              [student] 
+    1. score=0.3977 ho-tro-tai-chinh-sinh-vien-dang-hoc#0      [student]
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2674 quy-dinh-tai-chinh-bieu-phi#53             [student] 
+    2. score=0.3917 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student]
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2546 quy-dinh-tai-chinh-bieu-phi#86             [student] 
+    3. score=0.3075 duy-tri-hoc-bong-ho-tro-tai-chinh#0        [student]
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-sinh-vien-dang-hoc | đối tượng: student | phiên bản: not-stated) # Hỗ trợ tài chính dành cho sinh viên đang học  Trong quá trình học, nếu sinh viên gặp khó khăn tài chính phát sinh đột xuất – chẳng hạn như mất nguồn thu nhập của gia đình, chi phí y tế khẩn cấp, hoặc các tình huống bất ngờ khác – có thể nộp hồ sơ đề nghị xét Hỗ trợ Tài chính bổ sung, ngoài khoản hỗ trợ ban đầu khi nhập học. Chương trình này nhằm đảm bảo rằng không sinh viên nào phải gián đoạn việc học vì lý do tài chính.  [2] (nguồn: duy-tri-hoc-bo
 
--- structure_leaf: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2262 huong-dan-de-nghi-ho-tro-tai-chinh#6       [student] 4. Financial Support Request Procedures > 1. Gather Required Documenta
+-- structure_leaf: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
+    1. score=0.4366 duy-tri-hoc-bong-ho-tro-tai-chinh#10       [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 8. Hỗ trợ Tà
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.1884 huong-dan-de-nghi-ho-tro-tai-chinh#15      [student] 8. Contact Information
+    2. score=0.4024 ho-tro-tai-chinh-sinh-vien-dang-hoc#0      [student] (mở đầu)
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.1872 quy-dinh-tai-chinh-bieu-phi#22             [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
+    3. score=0.3853 duy-tri-hoc-bong-ho-tro-tai-chinh#1        [student] 2. Phạm vi
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: duy-tri-hoc-bong-ho-tro-tai-chinh | đối tượng: student | phiên bản: GDL-SAM-004-V2.1 (04/09/2025)) Tài liệu: Quy định duy trì Học bổng đầu vào và Hỗ trợ tài chính Mục: 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 8. Hỗ trợ Tài chính  - **Mức hỗ trợ:** Từ 50% - **Điều kiện duy trì:**   1. Duy trì điểm trung bình chung từ 2,0 trong năm học được đánh giá (trung bình chung GPA của hai học kỳ chính: Học kỳ mùa thu và Học kỳ mùa xuân).   2. Hoàn thành bản tự đánh giá E.X.C.E.L và gặp Cố vấn để thảo luận về bản tự đánh giá.
 
--- structure_tree: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: có | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.2848 huong-dan-de-nghi-ho-tro-tai-chinh#0       [student] 1. Purpose and Scope
+-- structure_tree: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
+    1. score=0.3853 duy-tri-hoc-bong-ho-tro-tai-chinh#1        [student] 2. Phạm vi
       signals={'dense': 1, 'rrf': 0.0164}
-    2. score=0.2440 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng 
+    2. score=0.3732 ho-tro-tai-chinh-sinh-vien-dang-hoc#0      [student] (mở đầu)
       signals={'dense': 2, 'rrf': 0.0161}
-    3. score=0.2262 huong-dan-de-nghi-ho-tro-tai-chinh#3       [student] 4. Financial Support Request Procedures > 1. Gather Required Documenta
+    3. score=0.3516 quy-dinh-tai-chinh-bieu-phi#20             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
       signals={'dense': 3, 'rrf': 0.0159}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: duy-tri-hoc-bong-ho-tro-tai-chinh | đối tượng: student | phiên bản: GDL-SAM-004-V2.1 (04/09/2025)) Tài liệu: Quy định duy trì Học bổng đầu vào và Hỗ trợ tài chính Mục: 2. Phạm vi  Tài liệu này áp dụng cho tất cả sinh viên đại học chính quy tại VinUni đã nhận học bổng tài năng hoặc hỗ trợ tài chính.  - Học bổng tài năng (học bổng dựa trên thành tích): Học bổng đầu vào dựa trên thành tích được cấp cho toàn bộ thời gian học và không được nâng cấp mức học bổng trong quá trình học. - Hỗ trợ tài chính dựa trên nhu cầu: Hỗ trợ tài chính
 
 -- tree+bm25: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-    1. score=0.0311 duy-tri-hoc-bong-ho-tro-tai-chinh#2        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 1. Học bổng 
-      signals={'dense': 2, 'bm25': 7, 'rrf': 0.0311}
-    2. score=0.0307 quy-dinh-tai-chinh-bieu-phi#15             [student] B. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ CHƯƠNG TRÌNH SAU ĐẠI HỌC > 1. Phí xé
-      signals={'dense': 10, 'bm25': 1, 'rrf': 0.0307}
-    3. score=0.0280 quy-dinh-tai-chinh-bieu-phi#23             [student] D. CHÍNH SÁCH LIÊN QUAN ĐẾN HỌC PHÍ, HỌC BỔNG VÀ HỖ TRỢ TÀI CHÍNH & ƯU
-      signals={'dense': 18, 'bm25': 6, 'rrf': 0.028}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+    1. score=0.0315 quy-dinh-tai-chinh-bieu-phi#15             [student] B. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ CHƯƠNG TRÌNH SAU ĐẠI HỌC > 1. Phí xé
+      signals={'dense': 6, 'bm25': 1, 'rrf': 0.0315}
+    2. score=0.0315 duy-tri-hoc-bong-ho-tro-tai-chinh#4        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào
+      signals={'dense': 5, 'bm25': 2, 'rrf': 0.0315}
+    3. score=0.0310 duy-tri-hoc-bong-ho-tro-tai-chinh#3        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào > 2. Học bổng
+      signals={'dense': 4, 'bm25': 5, 'rrf': 0.031}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: B. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ CHƯƠNG TRÌNH SAU ĐẠI HỌC > 1. Phí xét tuyển hồ sơ  - Phí xét tuyển hồ sơ là chi phí xử lý sàng lọc hồ sơ khi Ứng viên nộp hồ sơ dự tuyển vào Trường - Mức phí 2.000.000 đồng/lần/ứng viên được vào vòng phỏng vấn. - Ứng viên được xét miễn trừ Phí xét tuyển hồ sơ trong các trường hợp:   - Tham gia các sự kiện tuyển sinh do Trường ho
 
 -- tree+bm25+hyde: điểm 0/2 | chunk liên quan đầu tiên: - | doc_id gold trong top-3: không | độ phủ dữ kiện: 0% | trả lời đúng: không
-   HyDE[en]: You are an officer at the Finance / Financial Aid Office of a university in Vietnam....
-   HyDE[vi]: Bạn là chuyên viên Phòng Tài chính – Công tác sinh viên của một trường đại học tại Việt Nam....
-    1. score=0.0598 quy-dinh-tai-chinh-bieu-phi#15             [student] B. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ CHƯƠNG TRÌNH SAU ĐẠI HỌC > 1. Phí xé
-      signals={'dense': 10, 'hyde_en': 5, 'hyde_vi': 13, 'bm25': 1, 'rrf': 0.0598}
-    2. score=0.0534 quy-dinh-tai-chinh-bieu-phi#3              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
-      signals={'dense': 20, 'hyde_en': 7, 'hyde_vi': 17, 'bm25': 17, 'rrf': 0.0534}
-    3. score=0.0462 quy-dinh-tai-chinh-bieu-phi#2              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
-      signals={'hyde_en': 3, 'hyde_vi': 9, 'bm25': 3, 'rrf': 0.0462}
-   Trả lời: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+   HyDE[en]: Official university policy passage about financial support financial aid application submission application period deadline timeline Fall semester. Applicable requirements and timelines are stated in ...
+   HyDE[vi]: Quy định chính thức của trường liên quan đến câu hỏi: Hạn nộp hồ sơ xin hỗ trợ tài chính cho học kỳ mùa Thu là khi nào? Cần đối chiếu đúng đối tượng, điều kiện, số tiền, tỷ lệ và mốc thời gian trong v...
+    1. score=0.0554 quy-dinh-tai-chinh-bieu-phi#8              [student] A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN
+      signals={'dense': 13, 'hyde_en': 15, 'hyde_vi': 11, 'bm25': 10, 'rrf': 0.0554}
+    2. score=0.0474 duy-tri-hoc-bong-ho-tro-tai-chinh#4        [student] 3. Điều kiện duy trì Học bổng, Hỗ trợ tài chính đầu vào
+      signals={'dense': 5, 'hyde_vi': 3, 'bm25': 2, 'rrf': 0.0474}
+    3. score=0.0465 duy-tri-hoc-bong-ho-tro-tai-chinh#1        [student] 2. Phạm vi
+      signals={'dense': 1, 'hyde_vi': 1, 'bm25': 13, 'rrf': 0.0465}
+   Trả lời: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC KHOẢN PHÍ KHÁC > 5. Phí thi lại và Phí học lại  - Đối với các môn học không đạt yêu cầu, sinh viên có thể phải thi lại cuối kỳ (nếu có tổ chức thi lại) hoặc đăng ký học lại môn học. Việc áp dụng mức phí tương ứng sẽ áp dụng theo thông báo về mức phí thi lại và học lại của VinUni. - Trong trường hợp
 
 ====================================================================================================
 2. TỔNG HỢP (điểm /10 theo docs/SCORING.md)
 ====================================================================================================
 strategy           Q1   Q2   Q3   Q4   Q5   tổng   doc-hit@3   relevant@3   MRR    trả lời đúng
-fixed_size          0    0    0    0    0    0/10   3/5         0/5          0.00   0/5
-by_sentences        0    0    0    0    0    0/10   4/5         0/5          0.00   0/5
-recursive           0    0    0    0    0    0/10   2/5         0/5          0.00   0/5
-structure_leaf      0    0    0    0    0    0/10   3/5         0/5          0.00   0/5
-structure_tree      0    0    1    0    0    1/10   5/5         1/5          0.10   0/5
-tree+bm25           1    0    1    0    0    2/10   4/5         2/5          0.40   0/5
-tree+bm25+hyde      1    0    1    1    0    3/10   4/5         3/5          0.27   0/5
+fixed_size          2    2    1    1    0    6/10   4/5         4/5          0.60   3/5
+by_sentences        2    1    1    1    0    5/10   4/5         4/5          0.70   2/5
+recursive           2    1    0    0    0    3/10   4/5         2/5          0.30   2/5
+structure_leaf      2    1    2    0    0    5/10   4/5         3/5          0.50   3/5
+structure_tree      2    2    2    2    0    8/10   4/5         4/5          0.80   4/5
+tree+bm25           2    2    2    2    0    8/10   4/5         4/5          0.80   4/5
+tree+bm25+hyde      1    2    0    1    0    4/10   3/5         3/5          0.37   3/5
 
 ====================================================================================================
 3. A/B METADATA FILTER {'audience': 'student'} (các câu cần lọc)
 ====================================================================================================
-Q3 | fixed_size                       | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#17[student], quy-dinh-tai-chinh-bieu-phi#66[student], huong-dan-de-nghi-ho-tro-tai-chinh#6[student]
-   |                                  | không filter: điểm 0 | quy-dinh-tai-chinh-bieu-phi#17[student], quy-dinh-tai-chinh-bieu-phi#66[student], huong-dan-de-nghi-ho-tro-tai-chinh#6[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q3 | by_sentences                     | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#53[student], quy-dinh-tai-chinh-bieu-phi#37[student], quy-dinh-tai-chinh-bieu-phi#7[student]
-   |                                  | không filter: điểm 0 | quy-dinh-tai-chinh-bieu-phi#53[student], hoc-bong-cu-nhan#11[all], quy-dinh-tai-chinh-bieu-phi#37[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q3 | recursive                        | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#67[student], quy-dinh-tai-chinh-bieu-phi#61[student], quy-dinh-tai-chinh-bieu-phi#33[student]
-   |                                  | không filter: điểm 0 | quy-dinh-tai-chinh-bieu-phi#67[student], faq-hoc-phi-hoc-bong#9[all], khoan-vay-sinh-vien#2[all]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q3 | structure_leaf                   | có filter  : điểm 0 | huong-dan-de-nghi-ho-tro-tai-chinh#0[student], quy-dinh-tai-chinh-bieu-phi#43[student], quy-dinh-tai-chinh-bieu-phi#39[student]
-   |                                  | không filter: điểm 0 | khoan-vay-sinh-vien#1[all], huong-dan-de-nghi-ho-tro-tai-chinh#0[student], quy-dinh-tai-chinh-bieu-phi#43[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q3 | structure_tree                   | có filter  : điểm 1 | quy-dinh-tai-chinh-bieu-phi#27[student], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], huong-dan-de-nghi-ho-tro-tai-chinh#1[student]
-   |                                  | không filter: điểm 1 | quy-dinh-tai-chinh-bieu-phi#27[student], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], hoc-bong-cu-nhan#4[all]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q3 | tree+bm25                        | có filter  : điểm 1 | duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], duy-tri-hoc-bong-ho-tro-tai-chinh#4[student], duy-tri-hoc-bong-ho-tro-tai-chinh#3[student]
-   |                                  | không filter: điểm 1 | duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], faq-hoc-phi-hoc-bong#7[all], duy-tri-hoc-bong-ho-tro-tai-chinh#4[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q3 | tree+bm25+hyde                   | có filter  : điểm 1 | duy-tri-hoc-bong-ho-tro-tai-chinh#4[student], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], duy-tri-hoc-bong-ho-tro-tai-chinh#3[student]
-   |                                  | không filter: điểm 0 | duy-tri-hoc-bong-ho-tro-tai-chinh#4[student], duy-tri-hoc-bong-ho-tro-tai-chinh#3[student], quy-dinh-tai-chinh-bieu-phi#1[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q5 | fixed_size                       | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#31[student], huong-dan-de-nghi-ho-tro-tai-chinh#3[student], quy-dinh-tai-chinh-bieu-phi#41[student]
-   |                                  | không filter: điểm 0 | faq-hoc-phi-hoc-bong#2[all], hoc-phi-cu-nhan#2[all], quy-dinh-tai-chinh-bieu-phi#31[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q5 | by_sentences                     | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#53[student], huong-dan-de-nghi-ho-tro-tai-chinh#11[student], quy-dinh-tai-chinh-bieu-phi#54[student]
-   |                                  | không filter: điểm 0 | quy-dinh-tai-chinh-bieu-phi#53[student], huong-dan-de-nghi-ho-tro-tai-chinh#11[student], hoc-phi-cu-nhan#4[all]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q5 | recursive                        | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#2[student], quy-dinh-tai-chinh-bieu-phi#53[student], quy-dinh-tai-chinh-bieu-phi#86[student]
-   |                                  | không filter: điểm 0 | quy-dinh-tai-chinh-bieu-phi#2[student], hoc-phi-cu-nhan#7[all], quy-dinh-tai-chinh-bieu-phi#53[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q5 | structure_leaf                   | có filter  : điểm 0 | huong-dan-de-nghi-ho-tro-tai-chinh#6[student], huong-dan-de-nghi-ho-tro-tai-chinh#15[student], quy-dinh-tai-chinh-bieu-phi#22[student]
-   |                                  | không filter: điểm 0 | hoc-bong-cu-nhan#2[all], huong-dan-de-nghi-ho-tro-tai-chinh#6[student], huong-dan-de-nghi-ho-tro-tai-chinh#15[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q5 | structure_tree                   | có filter  : điểm 0 | huong-dan-de-nghi-ho-tro-tai-chinh#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], huong-dan-de-nghi-ho-tro-tai-chinh#3[student]
-   |                                  | không filter: điểm 0 | huong-dan-de-nghi-ho-tro-tai-chinh#0[student], hoc-bong-cu-nhan#2[all], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q5 | tree+bm25                        | có filter  : điểm 0 | duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], quy-dinh-tai-chinh-bieu-phi#15[student], quy-dinh-tai-chinh-bieu-phi#23[student]
-   |                                  | không filter: điểm 0 | duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], quy-dinh-tai-chinh-bieu-phi#15[student], faq-hoc-phi-hoc-bong#0[all]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
-Q5 | tree+bm25+hyde                   | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#15[student], quy-dinh-tai-chinh-bieu-phi#3[student], quy-dinh-tai-chinh-bieu-phi#2[student]
-   |                                  | không filter: điểm 0 | quy-dinh-tai-chinh-bieu-phi#15[student], faq-hoc-phi-hoc-bong#0[all], quy-dinh-tai-chinh-bieu-phi#2[student]
-   |                                  | trả lời không filter: Bạn là trợ lý tư vấn học phí, học bổng và hỗ trợ tài chính của Trường Đại học VinUni.
+Q3 | fixed_size                       | có filter  : điểm 1 | quy-dinh-tai-chinh-bieu-phi#49[student], duy-tri-hoc-bong-ho-tro-tai-chinh#4[student], duy-tri-hoc-bong-ho-tro-tai-chinh#0[student]
+   |                                  | không filter: điểm 0 | faq-hoc-phi-hoc-bong#5[all], faq-hoc-phi-hoc-bong#7[all], faq-hoc-phi-hoc-bong#8[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: faq-hoc-phi-hoc-bong | đối tượng: all | phiên bản: not-stated) ng tài năng hay phần trăm học bổng của tôi sẽ giảm như thế nào?  Tỉ lệ sinh viên bị hạ học bổng chỉ chiếm khoảng 2%. Tuy nhiên, nếu bạn không đáp ứng được điều kiện duy trì
+Q3 | by_sentences                     | có filter  : điểm 1 | duy-tri-hoc-bong-ho-tro-tai-chinh#5[student], quy-dinh-tai-chinh-bieu-phi#44[student], quy-dinh-tai-chinh-bieu-phi#36[student]
+   |                                  | không filter: điểm 0 | faq-hoc-phi-hoc-bong#7[all], faq-hoc-phi-hoc-bong#5[all], faq-hoc-phi-hoc-bong#11[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: faq-hoc-phi-hoc-bong | đối tượng: all | phiên bản: not-stated) ### Nếu không đáp ứng được điều kiện duy trì học bổng thì tôi sẽ mất toàn bộ học bổng tài năng hay phần trăm học bổng của tôi sẽ giảm như thế nào? Tỉ lệ sinh viên bị hạ học
+Q3 | recursive                        | có filter  : điểm 0 | duy-tri-hoc-bong-ho-tro-tai-chinh#5[student], quy-dinh-tai-chinh-bieu-phi#60[student], quy-dinh-tai-chinh-bieu-phi#70[student]
+   |                                  | không filter: điểm 0 | faq-hoc-phi-hoc-bong#5[all], faq-hoc-phi-hoc-bong#3[all], faq-hoc-phi-hoc-bong#9[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: faq-hoc-phi-hoc-bong | đối tượng: all | phiên bản: not-stated) ### Nếu không đáp ứng được điều kiện duy trì học bổng thì tôi sẽ mất toàn bộ học bổng tài năng hay phần trăm học bổng của tôi sẽ giảm như thế nào?  Tỉ lệ sinh viên bị hạ học
+Q3 | structure_leaf                   | có filter  : điểm 2 | duy-tri-hoc-bong-ho-tro-tai-chinh#3[student], duy-tri-hoc-bong-ho-tro-tai-chinh#4[student], quy-dinh-tai-chinh-bieu-phi#36[student]
+   |                                  | không filter: điểm 0 | faq-hoc-phi-hoc-bong#6[all], faq-hoc-phi-hoc-bong#9[all], faq-hoc-phi-hoc-bong#5[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: faq-hoc-phi-hoc-bong | đối tượng: all | phiên bản: not-stated) Tài liệu: Câu hỏi thường gặp: Học phí, Học bổng và Hỗ trợ tài chính Mục: Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy trì học bổng thì tôi sẽ mất toàn
+Q3 | structure_tree                   | có filter  : điểm 2 | duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], duy-tri-hoc-bong-ho-tro-tai-chinh#3[student], quy-dinh-tai-chinh-bieu-phi#24[student]
+   |                                  | không filter: điểm 0 | faq-hoc-phi-hoc-bong#3[all], faq-hoc-phi-hoc-bong#5[all], faq-hoc-phi-hoc-bong#2[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: faq-hoc-phi-hoc-bong | đối tượng: all | phiên bản: not-stated) Tài liệu: Câu hỏi thường gặp: Học phí, Học bổng và Hỗ trợ tài chính Mục: Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy trì học bổng thì tôi sẽ mất toàn
+Q3 | tree+bm25                        | có filter  : điểm 2 | duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], duy-tri-hoc-bong-ho-tro-tai-chinh#3[student], quy-dinh-tai-chinh-bieu-phi#24[student]
+   |                                  | không filter: điểm 1 | faq-hoc-phi-hoc-bong#3[all], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], faq-hoc-phi-hoc-bong#2[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: faq-hoc-phi-hoc-bong | đối tượng: all | phiên bản: not-stated) Tài liệu: Câu hỏi thường gặp: Học phí, Học bổng và Hỗ trợ tài chính Mục: Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy trì học bổng thì tôi sẽ mất toàn
+Q3 | tree+bm25+hyde                   | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#1[student], quy-dinh-tai-chinh-bieu-phi#28[student], quy-dinh-tai-chinh-bieu-phi#23[student]
+   |                                  | không filter: điểm 0 | faq-hoc-phi-hoc-bong#3[all], faq-hoc-phi-hoc-bong#4[all], hoc-bong-cu-nhan#5[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: faq-hoc-phi-hoc-bong | đối tượng: all | phiên bản: not-stated) Tài liệu: Câu hỏi thường gặp: Học phí, Học bổng và Hỗ trợ tài chính Mục: Học bổng và Hỗ trợ Tài chính > Nếu không đáp ứng được điều kiện duy trì học bổng thì tôi sẽ mất toàn
+Q5 | fixed_size                       | có filter  : điểm 0 | ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#1[student], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student]
+   |                                  | không filter: điểm 0 | ho-tro-tai-chinh-tan-sinh-vien#1[all], ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#1[student]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-tan-sinh-vien | đối tượng: all | phiên bản: not-stated)  thành tích.  Các ứng viên — bao gồm cả sinh viên Việt Nam và quốc tế — nếu đã đáp ứng điều kiện tuyển sinh của VinUni nhưng gặp khó khăn tài chính, có thể nộp hồ
+Q5 | by_sentences                     | có filter  : điểm 0 | ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#12[student], duy-tri-hoc-bong-ho-tro-tai-chinh#7[student]
+   |                                  | không filter: điểm 0 | ho-tro-tai-chinh-tan-sinh-vien#1[all], ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#12[student]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-tan-sinh-vien | đối tượng: all | phiên bản: not-stated) Các ứng viên — bao gồm cả sinh viên Việt Nam và quốc tế — nếu đã đáp ứng điều kiện tuyển sinh của VinUni nhưng gặp khó khăn tài chính, có thể nộp hồ sơ xin Hỗ trợ
+Q5 | recursive                        | có filter  : điểm 0 | ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student], duy-tri-hoc-bong-ho-tro-tai-chinh#0[student]
+   |                                  | không filter: điểm 0 | ho-tro-tai-chinh-tan-sinh-vien#1[all], ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#2[student]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-tan-sinh-vien | đối tượng: all | phiên bản: not-stated) Các ứng viên — bao gồm cả sinh viên Việt Nam và quốc tế — nếu đã đáp ứng điều kiện tuyển sinh của VinUni nhưng gặp khó khăn tài chính, có thể nộp hồ sơ xin Hỗ trợ
+Q5 | structure_leaf                   | có filter  : điểm 0 | duy-tri-hoc-bong-ho-tro-tai-chinh#10[student], ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], duy-tri-hoc-bong-ho-tro-tai-chinh#1[student]
+   |                                  | không filter: điểm 0 | ho-tro-tai-chinh-tan-sinh-vien#0[all], duy-tri-hoc-bong-ho-tro-tai-chinh#10[student], faq-hoc-phi-hoc-bong#12[all]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-tan-sinh-vien | đối tượng: all | phiên bản: not-stated) Tài liệu: Hỗ trợ tài chính dành cho tân sinh viên (ứng viên mới) (phần 1/2)  Trường Đại học VinUni cam kết mang đến cơ hội học tập đẳng cấp quốc tế cho mọi sinh vi
+Q5 | structure_tree                   | có filter  : điểm 0 | duy-tri-hoc-bong-ho-tro-tai-chinh#1[student], ho-tro-tai-chinh-sinh-vien-dang-hoc#0[student], quy-dinh-tai-chinh-bieu-phi#20[student]
+   |                                  | không filter: điểm 0 | ho-tro-tai-chinh-tan-sinh-vien#0[all], faq-hoc-phi-hoc-bong#7[all], duy-tri-hoc-bong-ho-tro-tai-chinh#1[student]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-tan-sinh-vien | đối tượng: all | phiên bản: not-stated) Tài liệu: Hỗ trợ tài chính dành cho tân sinh viên (ứng viên mới)  Trường Đại học VinUni cam kết mang đến cơ hội học tập đẳng cấp quốc tế cho mọi sinh viên tài năng
+Q5 | tree+bm25                        | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#15[student], duy-tri-hoc-bong-ho-tro-tai-chinh#4[student], duy-tri-hoc-bong-ho-tro-tai-chinh#3[student]
+   |                                  | không filter: điểm 0 | ho-tro-tai-chinh-tan-sinh-vien#0[all], faq-hoc-phi-hoc-bong#0[all], quy-dinh-tai-chinh-bieu-phi#15[student]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: ho-tro-tai-chinh-tan-sinh-vien | đối tượng: all | phiên bản: not-stated) Tài liệu: Hỗ trợ tài chính dành cho tân sinh viên (ứng viên mới)  Trường Đại học VinUni cam kết mang đến cơ hội học tập đẳng cấp quốc tế cho mọi sinh viên tài năng
+Q5 | tree+bm25+hyde                   | có filter  : điểm 0 | quy-dinh-tai-chinh-bieu-phi#8[student], duy-tri-hoc-bong-ho-tro-tai-chinh#4[student], duy-tri-hoc-bong-ho-tro-tai-chinh#1[student]
+   |                                  | không filter: điểm 0 | quy-dinh-tai-chinh-bieu-phi#8[student], ho-tro-tai-chinh-tan-sinh-vien#0[all], duy-tri-hoc-bong-ho-tro-tai-chinh#4[student]
+   |                                  | trả lời không filter: Bản trích xuất ngoại tuyến từ các nguồn liên quan:  [1] (nguồn: quy-dinh-tai-chinh-bieu-phi | đối tượng: student | phiên bản: VU_TS03.VN (22/07/2026)) Tài liệu: Quy định Tài chính và Biểu phí (dành cho sinh viên) năm học 2026-2027 Mục: A. QUY ĐỊNH TÀI CHÍNH VÀ BIỂU PHÍ HỆ ĐẠI HỌC CHÍNH QUY > II. CÁC
 
 (thời gian chạy: 0s)

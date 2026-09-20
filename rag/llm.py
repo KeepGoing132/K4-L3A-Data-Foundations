@@ -9,6 +9,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
+import unicodedata
 from pathlib import Path
 
 CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache" / "llm"
@@ -52,7 +54,57 @@ class CachedChatLLM:
                 with self._path.open("a", encoding="utf-8") as handle:
                     handle.write(json.dumps([key, self._cache[key]], ensure_ascii=False) + "\n")
             else:
-                lines = [l.strip() for l in prompt.splitlines() if len(l.strip()) > 30 and not l.strip().startswith("Query") and not l.strip().startswith("Question")]
-                ans = lines[0] if lines else "Được ghi nhận theo tài liệu quy định chính thức của VinUniversity."
-                self._cache[key] = ans
+                self._cache[key] = self._offline_response(prompt)
         return self._cache[key]
+
+    @staticmethod
+    def _fold(text: str) -> str:
+        return "".join(
+            char for char in unicodedata.normalize("NFD", text.lower())
+            if unicodedata.category(char) != "Mn"
+        )
+
+    def _offline_response(self, prompt: str) -> str:
+        """Return grounded extractive answers and deterministic HyDE query expansions.
+
+        The fallback never pretends to be a generative model.  For answer prompts it
+        returns the retrieved, already-cited evidence.  For HyDE prompts it creates a
+        bilingual lexical expansion without inventing amounts, percentages or dates.
+        """
+        context_match = re.search(r"NGỮ CẢNH:\s*(.*?)\s*CÂU HỎI:", prompt, re.S)
+        if context_match:
+            context = context_match.group(1).strip()
+            if not context:
+                return "Không tìm thấy thông tin trong tài liệu được cung cấp."
+            return "Bản trích xuất ngoại tuyến từ các nguồn liên quan:\n\n" + context
+
+        question_matches = re.findall(r"(?:Câu hỏi|Question):\s*(.+)", prompt)
+        question = question_matches[-1].strip() if question_matches else prompt.strip()
+        folded = self._fold(question)
+
+        if "write the passage in english" in prompt.lower():
+            terms: list[str] = []
+            glossary = {
+                "hoc phi": "tuition fee listed tuition fee",
+                "hoan tra": "refund reimbursement",
+                "thoi hoc": "withdrawal from study",
+                "hoc bong": "scholarship merit scholarship",
+                "diem trung binh": "grade point average GPA",
+                "uu dai": "tuition incentive discount",
+                "chiet khau": "payment discount",
+                "ho tro tai chinh": "financial support financial aid",
+                "nop ho so": "application submission application period",
+                "han": "deadline timeline",
+                "hoc ky mua thu": "Fall semester",
+                "dieu duong": "Bachelor of Nursing",
+            }
+            for source, target in glossary.items():
+                if source in folded:
+                    terms.append(target)
+            expansion = " ".join(terms) or "university policy eligibility amount deadline"
+            return f"Official university policy passage about {expansion}. Applicable requirements and timelines are stated in the regulation."
+
+        return (
+            f"Quy định chính thức của trường liên quan đến câu hỏi: {question} "
+            "Cần đối chiếu đúng đối tượng, điều kiện, số tiền, tỷ lệ và mốc thời gian trong văn bản."
+        )

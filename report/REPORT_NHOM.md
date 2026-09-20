@@ -95,8 +95,8 @@ chunks = chunker.chunk(text)
 - **Mô tả & lý do chọn:** Khai thác triệt để cấu trúc văn bản pháp quy của VinUni (các Điều khoản, Mục lớn, Bảng biểu). Thuật toán phân tích cây heading Markdown (`#`, `##`, `###`), gắn kèm breadcrumb tiêu đề vào đầu mỗi chunk (`Tài liệu > Phần > Mục`) và không bao giờ cắt ngang một hàng trong bảng biểu học phí.
 - **Code snippet:**
 ```python
-chunker = StructureAwareChunker(budget=1000, min_chunk=200)
-chunks = chunker.chunk(doc)  # Giữ trọn cây heading và breadcrumb ngữ cảnh
+chunker = StructureAwareChunker(mode="tree", max_chars=2200, min_chars=400)
+chunks = chunker.split(doc)  # Giữ trọn cây heading và breadcrumb ngữ cảnh
 ```
 
 ### So Sánh Giữa Các Thành Viên

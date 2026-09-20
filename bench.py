@@ -17,6 +17,7 @@ What it does (lab §6 "bench.py"):
 Usage:
     python bench.py                      # all strategies -> ket_qua_benchmark.txt
     python bench.py --only structure_tree          # one strategy
+    python bench.py --only structure_tree --output ket_qua_benchmark_thanh_vien_3.txt
     python bench.py --no-rerank                    # skip the cross-encoder (no model download)
     python bench.py --rerankers BAAI/bge-reranker-v2-m3,cross-encoder/mmarco-mMiniLMv2-L12-H384-v1
 """
@@ -101,8 +102,10 @@ QUERIES = [
         "question": "Hạn nộp hồ sơ xin hỗ trợ tài chính cho học kỳ mùa Thu là khi nào?",
         "gold": "Đợt nộp 20/6 – 10/7 (hạn 10/7), hạn xử lý 02/8, áp dụng cho học kỳ Thu (GDL-FAO-001). "
                 "Bẫy: trang tân sinh viên (audience=all) ghi hạn '23:59 ngày 15 của tháng liền kề trước'.",
-        "gold_docs": ["huong-dan-de-nghi-ho-tro-tai-chinh", "ho-tro-tai-chinh-sinh-vien-dang-hoc"],
-        "context_keys": [["20 June – 10 July", "July 10th", "tháng 7 và tháng 11"]],
+        # The Vietnamese overview only says reviews happen in July/November; it does
+        # not contain the exact deadline asked for, so it is intentionally not gold.
+        "gold_docs": ["huong-dan-de-nghi-ho-tro-tai-chinh"],
+        "context_keys": [["20 June – 10 July", "July 10th"]],
         "answer_keys": [["10/7", "10 tháng 7", "10/07", "July 10", "10 July", "ngày 10 tháng 7"]],
         "filter": STUDENT,
     },
@@ -155,7 +158,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--only", help="run a single strategy by name")
     parser.add_argument("--no-rerank", action="store_true", help="skip the cross-encoder strategy")
-    parser.add_argument("--rerankers", default=None, help="comma-separated cross-encoder models (default: RERANKER_MODEL or bge-reranker-v2-m3)")
+    parser.add_argument("--rerankers", default=None, help="comma-separated cross-encoder models; omitted means reranking is disabled")
+    parser.add_argument("--output", type=Path, help="write results to this path (also works together with --only)")
     args = parser.parse_args()
 
     load_dotenv(ROOT / ".env", override=False)
@@ -246,11 +250,14 @@ def main() -> int:
     lines.extend(ab_rows)
     out(f"\n(thời gian chạy: {time.time() - started:.0f}s)")
 
-    report = "\n".join(lines)
+    report = "\n".join(line.rstrip() for line in lines)
     print(report)
-    if not args.only:
-        OUTPUT.write_text(report + "\n", encoding="utf-8")
-        print(f"\n-> đã ghi {OUTPUT.name}")
+    output_path = args.output or (OUTPUT if not args.only else None)
+    if output_path:
+        if not output_path.is_absolute():
+            output_path = ROOT / output_path
+        output_path.write_text(report + "\n", encoding="utf-8")
+        print(f"\n-> đã ghi {output_path.relative_to(ROOT) if output_path.is_relative_to(ROOT) else output_path}")
     return 0
 
 
